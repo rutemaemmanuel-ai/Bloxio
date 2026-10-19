@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#081326">
+  <title>Game details — Vexora</title>
+  <link rel="stylesheet" href="style.css?v=20261013-27">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar"></header>
+    <main>
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="games.html">Games</a><span aria-hidden="true">/</span><span id="gameBreadcrumb">Game details</span></nav>
+      <section class="game-detail panel" id="gameDetail">
+        <img class="game-detail-art" id="gameDetailArt" src="assets/hero-world.jpg" alt="Colorful game world">
+        <div class="game-detail-copy">
+          <p class="eyebrow">GAME DETAILS</p>
+          <h1 id="gameDetailTitle">Game details</h1>
+          <p id="gameDetailDescription">Game information is not available.</p>
+          <span class="category" id="gameDetailCategory">Game</span>
+          <div class="game-detail-actions">
+            <button class="primary-button small" id="launchGame" type="button">Play now</button>
+            <a class="secondary-button small" href="games.html">Back to games</a>
+          </div>
+          <p class="demo-note">Five playable 3D browser games with local stages, bests, and checkpoints. Progress stays on this device.</p>
+        </div>
+      </section>
+      <section class="panel browser-game" id="browserGame" hidden aria-label="Playable browser game">
+        <div class="browser-game-header">
+          <div><p class="eyebrow">LOCAL PLAY SESSION</p><h2 id="browserGameTitle">Game</h2></div>
+          <div class="browser-game-stats"><span id="browserGameObjective">Choose a level to begin</span><span id="browserGameScore">Score: 0</span><span id="browserGameStatus" aria-live="polite">Ready</span></div>
+        </div>
+        <div class="game-stage">
+          <canvas id="browserGameCanvas" aria-label="Three-dimensional game play area"></canvas>
+          <div class="game-screen game-level-screen" id="gameLevelScreen">
+            <p class="eyebrow">CHOOSE YOUR RUN</p>
+            <h3 id="gameMenuTitle">Select a stage</h3>
+            <p id="gameMenuDescription">Five handcrafted stages, saved on this device.</p>
+            <div class="game-level-list" id="gameLevelList" aria-label="Choose a stage"></div>
+            <p class="game-control-hint" id="gameControlHint"></p>
+            <button class="primary-button small" id="startBrowserGame" type="button">Start stage</button>
+          </div>
+          <div class="game-screen game-state-screen" id="gameStateScreen" hidden>
+            <p class="eyebrow" id="gameStateEyebrow">PAUSED</p>
+            <h3 id="gameStateTitle">Take a breather</h3>
+            <p id="gameStateMessage">Your checkpoint is safe.</p>
+            <div class="game-state-actions" id="gameStateActions"></div>
+          </div>
+          <div class="game-progress-track" aria-hidden="true"><span id="gameProgressBar"></span></div>
+          <div class="game-viewport-controls">
+            <button class="secondary-button small" id="pauseBrowserGame" type="button" aria-label="Pause game" hidden>Pause</button>
+            <button class="secondary-button small" id="muteBrowserGame" type="button" aria-label="Mute game sounds">Sound on</button>
+            <button class="secondary-button small" id="exitBrowserGame" type="button" hidden>Exit</button>
+          </div>
+        </div>
+        <div class="game-city-tools" id="cityBuildTools" hidden aria-label="City building tools"></div>
+        <div class="game-touch-controls" aria-label="Touch game controls">
+          <button type="button" data-game-control="left" aria-label="Move left">←</button>
+          <button type="button" data-game-control="forward" aria-label="Move forward">↑</button>
+          <button type="button" data-game-control="jump" aria-label="Jump">Jump</button>
+          <button type="button" data-game-control="back" aria-label="Move backward">↓</button>
+          <button type="button" data-game-control="right" aria-label="Move right">→</button>
+        </div>
+        <div class="browser-game-footer"><p id="browserGameInstructions">Choose a stage to see its controls.</p><button class="secondary-button small" id="restartBrowserGame" type="button" hidden>Restart</button></div>
+        <p class="game-runtime-note" id="gameRuntimeNote">Procedural WebGL game. Progress and best scores are saved on this device.</p>
+      </section>
+      <p class="empty-state" id="gameNotFound" hidden>That game isn't in the current catalog. <a href="games.html">Browse all games</a>.</p>
+      <footer><span class="brand-small"><span class="brand-mark">V</span> VEXORA</span><span>Play. Create. Explore.</span><span>© 2026 Vexora</span></footer>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="script.js?v=20261018-2"></script>
+  <script type="module" src="local-features.js?v=20261018-2"></script>
+  <script type="module" src="game-runtime.js?v=20261013-3"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#081326">
+  <title>Vexora Games</title>
+  <link rel="stylesheet" href="style.css?v=20261013-26">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar" aria-label="Main header"></header>
+
+    <main>
+      <section class="page-heading">
+        <div><p class="eyebrow">GAME ARTWORK SAMPLES</p><h1>Games</h1><p>Browse a few visual samples from the home page. These are artwork previews only; the games are not playable.</p></div>
+      </section>
+      <section class="games-section" aria-labelledby="gameSamplesHeading">
+        <div class="section-heading">
+          <div><p class="eyebrow">A LOOK AT VEXORA WORLDS</p><h2 id="gameSamplesHeading">Game samples</h2></div>
+        </div>
+        <div class="game-grid" id="gameGrid">
+          <article class="game-card" data-name="Sky Racing" data-category="Racing">
+            <div class="game-image"><img src="assets/sky-racing.jpg" alt="Red sports car on a bright racing track" loading="lazy"></div>
+            <div class="game-info"><h3>Sky Racing</h3><div class="game-meta"><span class="category racing">Racing</span><span>Artwork sample</span></div></div>
+          </article>
+          <article class="game-card" data-name="Obby Challenge" data-category="Adventure">
+            <div class="game-image"><img src="assets/obby-challenge.jpg" alt="Colorful floating obstacle course" loading="lazy"></div>
+            <div class="game-info"><h3>Obby Challenge</h3><div class="game-meta"><span class="category adventure">Adventure</span><span>Artwork sample</span></div></div>
+          </article>
+          <article class="game-card" data-name="Island Survival" data-category="Survival">
+            <div class="game-image"><img src="assets/island-survival.jpg" alt="Cartoon island camp with a cabin and campfire" loading="lazy"></div>
+            <div class="game-info"><h3>Island Survival</h3><div class="game-meta"><span class="category survival">Survival</span><span>Artwork sample</span></div></div>
+          </article>
+          <article class="game-card" data-name="My City Tycoon" data-category="Simulator">
+            <div class="game-image"><img src="assets/city-tycoon.jpg" alt="Bright fantasy city built from colorful blocks" loading="lazy"></div>
+            <div class="game-info"><h3>My City Tycoon</h3><div class="game-meta"><span class="category simulator">Simulator</span><span>Artwork sample</span></div></div>
+          </article>
+          <article class="game-card" data-name="Mega Parkour" data-category="Skill">
+            <div class="game-image"><img src="assets/mega-parkour.jpg" alt="Cartoon character jumping between floating platforms" loading="lazy"></div>
+            <div class="game-info"><h3>Mega Parkour</h3><div class="game-meta"><span class="category skill">Skill</span><span>Artwork sample</span></div></div>
+          </article>
+        </div>
+        <div class="empty-state" id="emptyState" hidden>No samples match that search. Try another name.</div>
+      </section>
+
+      <footer><span class="brand-small"><span class="brand-mark">V</span> VEXORA</span><span>Play. Create. Explore.</span><span>© 2026 Vexora</span></footer>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="script.js?v=20261018-2"></script>
+</body>
+</html>

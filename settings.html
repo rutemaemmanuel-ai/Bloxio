@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#081326">
+  <title>Account Settings — Vexora</title>
+  <link rel="stylesheet" href="style.css?v=20261013-26">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar"></header>
+    <main>
+      <section class="page-heading"><div><p class="eyebrow">YOUR ACCOUNT</p><h1>Account Settings</h1><p>Manage preferences stored in this browser. Account-wide controls need a secure account service.</p></div></section>
+      <section class="settings-section panel">
+        <h2>Account & Security</h2>
+        <p>Sign-in, password, and security controls are not available in this front-end prototype.</p>
+        <a class="secondary-button small" href="profile.html">Manage public profile</a>
+      </section>
+      <section class="settings-section panel">
+        <h2>Privacy & Online Status</h2>
+        <div class="setting-row"><div class="setting-description"><strong>Share friend activity</strong><p>Allow your online and game activity to be shown when social presence is connected.</p><span class="setting-state" id="friendActivityState"></span></div><label class="switch"><input type="checkbox" data-setting="friendActivity"><span></span></label></div>
+      </section>
+      <section class="settings-section panel">
+        <h2>Messaging Permissions</h2>
+        <div class="setting-row"><div class="setting-description"><strong>Allow direct messages</strong><p>When off, the local demo inbox composer is disabled. Live messaging permissions require an account service.</p><span class="setting-state" id="directMessagesState"></span></div><label class="switch"><input type="checkbox" data-setting="directMessages" checked><span></span></label></div>
+      </section>
+      <section class="settings-section panel">
+        <h2>Notifications</h2>
+        <p>Notifications aren't implemented yet, so there are no inactive controls to configure.</p>
+      </section>
+      <section class="settings-section panel">
+        <h2>Accessibility</h2>
+        <div class="setting-row"><div class="setting-description"><strong>Reduced motion</strong><p>Reduce interface animations and stop the homepage slideshow from auto-advancing.</p><span class="setting-state">This preference applies to this browser.</span></div><label class="switch"><input type="checkbox" data-setting="reducedMotion"><span></span></label></div>
+      </section>
+      <section class="settings-section panel">
+        <h2>Sign Out</h2>
+        <p>There is no signed-in account in this prototype.</p>
+        <button class="secondary-button small" type="button" disabled>Sign Out unavailable</button>
+      </section>
+      <p class="settings-note">Settings and avatar preferences are stored locally in this browser. No account data is sent to a server.</p>
+      <footer><span class="brand-small"><span class="brand-mark">V</span> VEXORA</span><span>Play. Create. Explore.</span><span>© 2026 Vexora</span></footer>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="script.js?v=20261018-2"></script>
+</body>
+</html>

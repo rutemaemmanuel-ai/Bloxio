@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#081326">
+  <title>Store — Vexora</title>
+  <link rel="stylesheet" href="style.css?v=20261013-26">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar" aria-label="Main header"></header>
+    <main>
+      <section class="store-heading">
+        <div><p class="eyebrow">THE VEXORA MARKETPLACE</p><h1>Store</h1><p>Discover cosmetics, game items, perks, and more for your next adventure.</p></div>
+        <a class="secondary-button small" href="#coins">Wallet &amp; Transactions</a>
+      </section>
+
+      <section class="store-feature panel">
+        <div>
+          <p class="eyebrow">FEATURED PICK</p>
+          <h2>Make every world your own</h2>
+          <p>Explore sample cosmetics and game items. Prices are previews only; purchases and Vexora Coins are not connected.</p>
+          <a class="primary-button small" href="#store-products">Explore the Store <span aria-hidden="true">→</span></a>
+        </div>
+        <img src="assets/city-tycoon.jpg" alt="Bright fantasy city built from colorful blocks" loading="lazy">
+      </section>
+
+      <section class="store-wallet panel" id="coins">
+        <div><p class="eyebrow">VEXORA COINS</p><h2>Wallet &amp; Transactions</h2><p>Coins and payment services aren't active in this prototype. No balance or transaction history is available.</p></div>
+        <span class="muted-pill">Wallet not connected</span>
+      </section>
+
+      <section class="store-catalog" id="store-products">
+        <div class="section-heading">
+          <div><p class="eyebrow">BROWSE THE MARKETPLACE</p><h2>All products</h2></div>
+        </div>
+        <div class="store-controls">
+          <label class="store-search"><span aria-hidden="true">⌕</span><input id="storeSearch" type="search" placeholder="Search products..." aria-label="Search Store products"></label>
+          <label class="catalog-filter">Category
+            <select id="storeCategory" aria-label="Filter Store products by category">
+              <option value="">All products</option>
+              <option value="featured">Featured</option>
+              <option value="coins">Vexora Coins</option>
+              <option value="avatar-shop">Avatar Shop</option>
+              <option value="game-items">Game Items</option>
+              <option value="game-passes">Game Passes</option>
+              <option value="new-arrivals">New Arrivals</option>
+              <option value="top-sellers">Top Sellers</option>
+              <option value="free-items">Free Items</option>
+            </select>
+          </label>
+        </div>
+        <div class="store-grid" id="storeGrid">
+          <article class="store-card panel" data-store-product data-store-categories="featured avatar-shop new-arrivals" data-product-name="Aurora Explorer Set" data-product-price="900 Vexora Coins (sample price)">
+            <div class="store-product-art"><img src="assets/hero-world.jpg" alt="Colorful floating island world" loading="lazy"><span class="store-badge">Featured</span></div>
+            <div class="store-product-copy"><span class="store-product-type">Avatar Shop · New Arrival</span><h3>Aurora Explorer Set</h3><p class="store-price">900 <span>Vexora Coins*</span></p><button class="secondary-button small" type="button" data-store-details>View Details</button></div>
+          </article>
+          <article class="store-card panel" data-store-product data-store-categories="featured coins top-sellers" data-product-name="500 Vexora Coins" data-product-price="$1.99 USD (sample price)">
+            <div class="store-product-art"><img src="assets/city-tycoon.jpg" alt="Colorful fantasy city" loading="lazy"><span class="store-badge">Top Seller</span></div>
+            <div class="store-product-copy"><span class="store-product-type">Vexora Coins</span><h3>500 Vexora Coins</h3><p class="store-price">$1.99 <span>sample price</span></p><button class="secondary-button small" type="button" data-store-details>View Details</button><button class="store-buy-button" type="button" disabled>Payments unavailable</button></div>
+          </article>
+          <article class="store-card panel" data-store-product data-store-categories="coins" data-product-name="1,200 Vexora Coins" data-product-price="$3.99 USD (sample price)">
+            <div class="store-product-art"><img src="assets/sky-racing.jpg" alt="Red sports car on a bright racing track" loading="lazy"></div>
+            <div class="store-product-copy"><span class="store-product-type">Vexora Coins</span><h3>1,200 Vexora Coins</h3><p class="store-price">$3.99 <span>sample price</span></p><button class="secondary-button small" type="button" data-store-details>View Details</button><button class="store-buy-button" type="button" disabled>Payments unavailable</button></div>
+          </article>
+          <article class="store-card panel" data-store-product data-store-categories="coins" data-product-name="3,000 Vexora Coins" data-product-price="$8.99 USD (sample price)">
+            <div class="store-product-art"><img src="assets/island-survival.jpg" alt="Cartoon island camp" loading="lazy"></div>
+            <div class="store-product-copy"><span class="store-product-type">Vexora Coins</span><h3>3,000 Vexora Coins</h3><p class="store-price">$8.99 <span>sample price</span></p><button class="secondary-button small" type="button" data-store-details>View Details</button><button class="store-buy-button" type="button" disabled>Payments unavailable</button></div>
+          </article>
+          <article class="store-card panel" data-store-product data-store-categories="avatar-shop top-sellers" data-product-name="Neon Trail Outfit" data-product-price="650 Vexora Coins (sample price)">
+            <div class="store-product-art"><img src="assets/mega-parkour.jpg" alt="Cartoon character jumping between floating platforms" loading="lazy"><span class="store-badge">Top Seller</span></div>
+            <div class="store-product-copy"><span class="store-product-type">Avatar Shop · Outfit</span><h3>Neon Trail Outfit</h3><p class="store-price">650 <span>Vexora Coins*</span></p><button class="secondary-button small" type="button" data-store-details>View Details</button></div>
+          </article>
+          <article class="store-card panel" data-store-product data-store-categories="avatar-shop new-arrivals" data-product-name="Pixel Prism Skin" data-product-price="500 Vexora Coins (sample price)">
+            <div class="store-product-art"><img src="assets/city-tycoon.jpg" alt="Colorful cityscape used as cosmetic preview art" loading="lazy"><span class="store-badge">New</span></div>
+            <div class="store-product-copy"><span class="store-product-type">Avatar Shop · Skin</span><h3>Pixel Prism Skin</h3><p class="store-price">500 <span>Vexora Coins*</span></p><button class="secondary-button small" type="button" data-store-details>View Details</button></div>
+          </article>
+          <article class="store-card panel" data-store-product data-store-categories="avatar-shop game-items new-arrivals" data-product-name="Cloud Fox Companion" data-product-price="400 Vexora Coins (sample price)">
+            <div class="store-product-art"><img src="assets/island-survival.jpg" alt="Island adventure environment" loading="lazy"><span class="store-badge">New</span></div>
+            <div class="store-product-copy"><span class="store-product-type">Game Item · Companion</span><h3>Cloud Fox Companion</h3><p class="store-price">400 <span>Vexora Coins*</span></p><button class="secondary-button small" type="button" data-store-details>View Details</button></div>
+          </article>
+          <article class="store-card panel" data-store-product data-store-categories="game-items top-sellers" data-product-name="Sky Racing Nitro Kit" data-product-price="300 Vexora Coins (sample price)">
+            <div class="store-product-art"><img src="assets/sky-racing.jpg" alt="Sky Racing game world" loading="lazy"><span class="store-badge">Top Seller</span></div>
+            <div class="store-product-copy"><span class="store-product-type">Game Item · Sky Racing</span><h3>Sky Racing Nitro Kit</h3><p class="store-price">300 <span>Vexora Coins*</span></p><button class="secondary-button small" type="button" data-store-details>View Details</button></div>
+          </article>
+          <article class="store-card panel" data-store-product data-store-categories="game-items" data-product-name="Cloudline Grapple Tool" data-product-price="350 Vexora Coins (sample price)">
+            <div class="store-product-art"><img src="assets/obby-challenge.jpg" alt="Floating obstacle course" loading="lazy"></div>
+            <div class="store-product-copy"><span class="store-product-type">Game Item · Obby Challenge</span><h3>Cloudline Grapple Tool</h3><p class="store-price">350 <span>Vexora Coins*</span></p><button class="secondary-button small" type="button" data-store-details>View Details</button></div>
+          </article>
+          <article class="store-card panel" data-store-product data-store-categories="game-items" data-product-name="Island Tidal Skin" data-product-price="450 Vexora Coins (sample price)">
+            <div class="store-product-art"><img src="assets/island-survival.jpg" alt="Island world used as game skin preview art" loading="lazy"></div>
+            <div class="store-product-copy"><span class="store-product-type">Game Item · Island Survival Skin</span><h3>Island Tidal Skin</h3><p class="store-price">450 <span>Vexora Coins*</span></p><button class="secondary-button small" type="button" data-store-details>View Details</button></div>
+          </article>
+          <article class="store-card panel" data-store-product data-store-categories="game-passes featured" data-product-name="Island Explorer Pass" data-product-price="750 Vexora Coins (sample price)">
+            <div class="store-product-art"><img src="assets/island-survival.jpg" alt="Island Survival game world" loading="lazy"><span class="store-badge">Featured</span></div>
+            <div class="store-product-copy"><span class="store-product-type">Game Pass · Island Survival</span><h3>Island Explorer Pass</h3><p class="store-price">750 <span>Vexora Coins*</span></p><button class="secondary-button small" type="button" data-store-details>View Details</button></div>
+          </article>
+          <article class="store-card panel" data-store-product data-store-categories="free-items avatar-shop" data-product-name="Vexora Starter Cap" data-product-price="Free (sample listing)">
+            <div class="store-product-art"><img src="assets/obby-challenge.jpg" alt="Colorful floating obstacle course" loading="lazy"><span class="store-badge">Free</span></div>
+            <div class="store-product-copy"><span class="store-product-type">Avatar Shop · Accessory</span><h3>Vexora Starter Cap</h3><p class="store-price">Free <span>sample listing</span></p><button class="secondary-button small" type="button" data-store-details>View Details</button></div>
+          </article>
+          <article class="store-card panel" data-store-product data-store-categories="free-items game-items" data-product-name="Starter Speed Boost" data-product-price="Free (sample listing)">
+            <div class="store-product-art"><img src="assets/mega-parkour.jpg" alt="Mega Parkour floating platforms" loading="lazy"><span class="store-badge">Free</span></div>
+            <div class="store-product-copy"><span class="store-product-type">Game Item · Mega Parkour</span><h3>Starter Speed Boost</h3><p class="store-price">Free <span>sample listing</span></p><button class="secondary-button small" type="button" data-store-details>View Details</button></div>
+          </article>
+        </div>
+        <p class="empty-state" id="storeEmpty" hidden>No products match your search. Try another category or search term.</p>
+        <p class="store-disclaimer">*All listings and prices are illustrative. Vexora Coins, purchases, game passes, and inventory delivery are not connected; no real or virtual transactions can be made here.</p>
+      </section>
+      <footer><span class="brand-small"><span class="brand-mark">V</span> VEXORA</span><span>Play. Create. Explore.</span><span>© 2026 Vexora</span></footer>
+    </main>
+  </div>
+  <dialog class="store-dialog" id="storeProductDialog" aria-labelledby="storeDialogTitle">
+    <div class="store-dialog-content">
+      <button class="store-dialog-close" type="button" data-dialog-close aria-label="Close product details">×</button>
+      <p class="eyebrow">PRODUCT DETAILS</p>
+      <h2 id="storeDialogTitle" data-dialog-name>Product</h2>
+      <p class="store-dialog-price" data-dialog-price></p>
+      <p>Store listings are previews only. Purchases, coin balance, and item delivery aren't available in this prototype.</p>
+    </div>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="script.js?v=20261018-2"></script>
+</body>
+</html>

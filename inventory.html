@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#081326">
+  <title>Inventory — Vexora</title>
+  <link rel="stylesheet" href="style.css?v=20261013-26">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar"></header>
+    <main>
+      <section class="page-heading"><div><p class="eyebrow">YOUR COLLECTION</p><h1>Inventory</h1><p>Browse the sample collection. Item ownership and equipment aren't synced to an account.</p></div><a class="secondary-button small" href="profile.html">Back to Profile</a></section>
+      <nav class="inventory-tabs" aria-label="Filter inventory">
+        <button class="inventory-tab active" type="button" data-inventory-filter="all" aria-pressed="true">All Items</button>
+        <button class="inventory-tab" type="button" data-inventory-filter="accessories" aria-pressed="false">Accessories</button>
+        <button class="inventory-tab" type="button" data-inventory-filter="cosmetics" aria-pressed="false">Clothing & Cosmetics</button>
+        <button class="inventory-tab" type="button" data-inventory-filter="collectibles" aria-pressed="false">Collectibles</button>
+        <button class="inventory-tab" type="button" data-inventory-filter="rewards" aria-pressed="false">Rewards</button>
+      </nav>
+      <p class="community-demo-note">Sample inventory items shown for layout preview; this is not a live collection.</p>
+      <section class="inventory-page-grid" id="inventoryGrid">
+        <article class="item-card inventory-item" data-item-category="collectibles" data-item-id="nova-blade" data-equipable="true"><span class="item-icon">⚔️</span><span class="item-rarity">Rare</span><strong>Nova Blade</strong><small>Weapon · Sky Racing</small><div class="item-actions"><button class="secondary-button small item-equip" type="button">Equip</button><button class="secondary-button small item-view" type="button">View Item</button></div></article>
+        <article class="item-card inventory-item" data-item-category="cosmetics" data-item-id="neon-pack" data-equipable="true"><span class="item-icon">🎨</span><span class="item-rarity">Epic</span><strong>Neon Pack</strong><small>Skin bundle · Universal</small><div class="item-actions"><button class="secondary-button small item-equip" type="button">Equip</button><button class="secondary-button small item-view" type="button">View Item</button></div></article>
+        <article class="item-card inventory-item" data-item-category="accessories" data-item-id="moon-pet" data-equipable="true"><span class="item-icon">🐾</span><span class="item-rarity">Rare</span><strong>Moon Pet</strong><small>Companion · Island Survival</small><div class="item-actions"><button class="secondary-button small item-equip" type="button">Equip</button><button class="secondary-button small item-view" type="button">View Item</button></div></article>
+        <article class="item-card inventory-item" data-item-category="rewards" data-item-id="speed-rune"><span class="item-icon">🚀</span><span class="item-rarity">Uncommon</span><strong>Speed Rune</strong><small>Boost · Mega Parkour</small><div class="item-actions"><button class="secondary-button small item-view" type="button">View Item</button></div></article>
+        <article class="item-card inventory-item" data-item-category="accessories" data-item-id="cloud-board" data-equipable="true"><span class="item-icon">🛹</span><span class="item-rarity">Rare</span><strong>Cloud Board</strong><small>Vehicle · Sky Racing</small><div class="item-actions"><button class="secondary-button small item-equip" type="button">Equip</button><button class="secondary-button small item-view" type="button">View Item</button></div></article>
+        <article class="item-card inventory-item" data-item-category="rewards" data-item-id="first-victory"><span class="item-icon">🏆</span><span class="item-rarity">Common</span><strong>First Victory</strong><small>Trophy · Profile badge</small><div class="item-actions"><button class="secondary-button small item-view" type="button">View Item</button></div></article>
+      </section>
+      <div class="empty-state" id="inventoryEmpty" hidden>No items match this category.</div>
+      <footer><span class="brand-small"><span class="brand-mark">V</span> VEXORA</span><span>Play. Create. Explore.</span><span>© 2026 Vexora</span></footer>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="script.js?v=20261018-2"></script>
+</body>
+</html>

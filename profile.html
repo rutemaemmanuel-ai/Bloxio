@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#081326">
+  <title>Profile — Vexora</title>
+  <link rel="stylesheet" href="style.css?v=20261013-26">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar"></header>
+    <main>
+      <section class="page-heading"><div><p class="eyebrow">YOUR PLAYER DASHBOARD</p><h1>Profile</h1><p>Manage your player identity and view activity available on this device.</p></div></section>
+      <section class="panel profile-hero">
+        <div class="profile-page-avatar" id="avatarPreview" aria-label="Current avatar">👨🏻‍🚀</div>
+        <div class="profile-identity">
+          <p class="eyebrow">PLAYER PROFILE</p>
+          <h1 id="profileDisplayName">Vexora Player</h1>
+          <p id="profileUsername">@player</p>
+          <p id="profileBio">Add a short introduction about yourself.</p>
+          <span class="muted-pill" id="profileMode">Local demo profile</span>
+        </div>
+        <button class="primary-button small" id="editProfileButton" type="button">Edit Profile</button>
+      </section>
+      <form class="profile-form panel" id="profileEditForm" hidden>
+        <div class="section-heading"><div><p class="eyebrow">PLAYER IDENTITY</p><h2>Edit Profile</h2></div></div>
+        <label>Display name<input id="profileNameInput" name="displayName" maxlength="40" required></label>
+        <label>Bio<textarea id="profileBioInput" name="bio" maxlength="240"></textarea></label>
+        <div class="profile-actions"><button class="primary-button small" type="submit">Save Profile</button><button class="secondary-button small" id="cancelProfileEdit" type="button">Cancel</button></div>
+        <p class="demo-note">Your profile edits are saved only in this browser.</p>
+      </form>
+      <nav class="profile-tabs" role="tablist" aria-label="Profile sections">
+        <button class="profile-tab active" type="button" role="tab" aria-selected="true" aria-controls="profile-overview" data-profile-tab="profile-overview">Overview</button>
+        <button class="profile-tab" type="button" role="tab" aria-selected="false" aria-controls="profile-activity" data-profile-tab="profile-activity">Game Activity</button>
+        <button class="profile-tab" type="button" role="tab" aria-selected="false" aria-controls="profile-achievements" data-profile-tab="profile-achievements">Achievements</button>
+        <button class="profile-tab" type="button" role="tab" aria-selected="false" aria-controls="profile-favorites" data-profile-tab="profile-favorites">Favorites</button>
+        <button class="profile-tab" type="button" role="tab" aria-selected="false" aria-controls="profile-avatar" data-profile-tab="profile-avatar">Avatar</button>
+      </nav>
+      <section class="profile-section" id="profile-overview" role="tabpanel">
+        <div class="profile-stat-grid">
+          <article class="profile-stat"><strong>Not tracked</strong><span>Player level and experience</span></article>
+          <article class="profile-stat"><strong>Not tracked</strong><span>Games played and playtime</span></article>
+        </div>
+        <div class="profile-actions profile-overview-actions"><a class="secondary-button small" href="settings.html">Account Settings</a></div>
+        <p class="demo-note">Stats and join date are omitted until account and gameplay data is available.</p>
+      </section>
+      <section class="profile-section" id="profile-activity" role="tabpanel" hidden>
+        <div class="profile-play-history" id="profilePlayHistory"></div>
+        <p class="empty-state" id="profilePlayHistoryEmpty">Games you launch on this device will appear here.</p>
+        <a class="secondary-button small" href="games.html">Browse games</a>
+      </section>
+      <section class="profile-section" id="profile-achievements" role="tabpanel" hidden>
+        <div class="panel empty-panel"><h2>Achievements and badges</h2><p>Achievements aren't available until the game and account services are connected.</p></div>
+      </section>
+      <section class="profile-section" id="profile-favorites" role="tabpanel" hidden>
+        <div id="profileFavoriteGames" class="game-grid"></div>
+        <p class="empty-state" id="profileFavoritesEmpty">Favorite games saved in this browser will appear here.</p>
+      </section>
+      <section class="profile-section" id="profile-avatar" role="tabpanel" hidden>
+        <div class="panel avatar-editor">
+          <div class="panel-header"><h2>Avatar customization</h2><span class="muted-pill">Saved on this device</span></div>
+          <p class="muted-copy">Choose a look for this local profile. The equipped avatar is shown in the account menu.</p>
+          <div class="avatar-choices" aria-label="Choose an avatar">
+            <button class="avatar-choice" type="button" data-avatar="👨🏻‍🚀" aria-label="Astronaut avatar">👨🏻‍🚀</button>
+            <button class="avatar-choice" type="button" data-avatar="🧑🏽‍🎤" aria-label="Singer avatar">🧑🏽‍🎤</button>
+            <button class="avatar-choice" type="button" data-avatar="🧙🏻‍♀️" aria-label="Wizard avatar">🧙🏻‍♀️</button>
+            <button class="avatar-choice" type="button" data-avatar="🦸🏾" aria-label="Hero avatar">🦸🏾</button>
+            <button class="avatar-choice" type="button" data-avatar="🥷🏻" aria-label="Ninja avatar">🥷🏻</button>
+            <button class="avatar-choice" type="button" data-avatar="🧑🏻‍🚀" aria-label="Explorer avatar">🧑🏻‍🚀</button>
+          </div>
+          <p class="equipped-badge" id="equippedAvatarLabel">Equipped avatar</p>
+          <button class="primary-button small" id="saveAvatar" type="button">Save Avatar</button>
+        </div>
+      </section>
+      <footer><span class="brand-small"><span class="brand-mark">V</span> VEXORA</span><span>Play. Create. Explore.</span><span>© 2026 Vexora</span></footer>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="script.js?v=20261018-2"></script>
+  <script type="module" src="local-features.js?v=20261018-2"></script>
+</body>
+</html>

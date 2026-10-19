@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0f17">
+  <title>Vexora Studio — 3D Game Engine & Editor</title>
+  <link rel="stylesheet" href="studio.css?v=20261015-1">
+</head>
+<body>
+  <div class="studio-app" id="studioApp">
+    <!-- TOP TOOLBAR & MENUS -->
+    <header class="studio-toolbar" role="toolbar" aria-label="Studio Toolbar">
+      <div class="toolbar-left">
+        <a class="studio-brand" href="create.html" title="Back to Vexora Creator Dashboard">
+          <span class="studio-logo-badge">V</span>
+          <span>VEXORA <span style="color:var(--accent-cyan);font-weight:400;">STUDIO</span></span>
+        </a>
+
+        <div class="project-name-badge" id="projectNameBadge" title="Click to rename project">
+          <span id="currentProjectTitle">My 3D Game</span>
+          <span style="font-size:10px;opacity:0.6;">✎</span>
+        </div>
+
+        <nav class="menu-bar" aria-label="Editor Menu Bar">
+          <div class="menu-item" id="menuFile">
+            <button class="menu-btn" type="button">File ▾</button>
+            <div class="dropdown-menu">
+              <button class="dropdown-item" type="button" id="menuActionNewProject"><span>New Project...</span><span class="shortcut">Ctrl+N</span></button>
+              <button class="dropdown-item" type="button" id="menuActionOpenProject"><span>Open Projects...</span><span class="shortcut">Ctrl+O</span></button>
+              <div class="dropdown-divider"></div>
+              <button class="dropdown-item" type="button" id="menuActionSaveProject"><span>Save Project</span><span class="shortcut">Ctrl+S</span></button>
+              <button class="dropdown-item" type="button" id="menuActionExportJson"><span>Export Project JSON</span><span class="shortcut">Ctrl+E</span></button>
+              <button class="dropdown-item" type="button" id="menuActionImportJson"><span>Import Project JSON...</span></button>
+              <div class="dropdown-divider"></div>
+              <button class="dropdown-item" type="button" id="menuActionPublish"><span>Publish to Vexora...</span><span class="shortcut" style="color:var(--accent-cyan);">⚡</span></button>
+              <div class="dropdown-divider"></div>
+              <button class="dropdown-item" type="button" id="menuActionDeleteProject"><span>Delete Current Project...</span></button>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="create.html" style="text-decoration:none;"><span>Exit to Vexora Hub</span></a>
+            </div>
+          </div>
+
+          <div class="menu-item" id="menuEdit">
+            <button class="menu-btn" type="button">Edit ▾</button>
+            <div class="dropdown-menu">
+              <button class="dropdown-item" type="button" id="menuActionUndo"><span>Undo</span><span class="shortcut">Ctrl+Z</span></button>
+              <button class="dropdown-item" type="button" id="menuActionRedo"><span>Redo</span><span class="shortcut">Ctrl+Y</span></button>
+              <div class="dropdown-divider"></div>
+              <button class="dropdown-item" type="button" id="menuActionDuplicate"><span>Duplicate Object</span><span class="shortcut">Ctrl+D</span></button>
+              <button class="dropdown-item" type="button" id="menuActionDelete"><span>Delete Object</span><span class="shortcut">Del</span></button>
+              <button class="dropdown-item" type="button" id="menuActionFocus"><span>Focus Selected</span><span class="shortcut">F</span></button>
+            </div>
+          </div>
+
+          <div class="menu-item" id="menuGameObject">
+            <button class="menu-btn" type="button">Add ▾</button>
+            <div class="dropdown-menu">
+              <button class="dropdown-item" type="button" data-add-primitive="box"><span>Cube</span><span class="shortcut">1</span></button>
+              <button class="dropdown-item" type="button" data-add-primitive="sphere"><span>Sphere</span><span class="shortcut">2</span></button>
+              <button class="dropdown-item" type="button" data-add-primitive="cylinder"><span>Cylinder</span><span class="shortcut">3</span></button>
+              <button class="dropdown-item" type="button" data-add-primitive="capsule"><span>Capsule</span><span class="shortcut">4</span></button>
+              <button class="dropdown-item" type="button" data-add-primitive="cone"><span>Cone</span></button>
+              <button class="dropdown-item" type="button" data-add-primitive="plane"><span>Ground Plane</span></button>
+              <button class="dropdown-item" type="button" data-add-primitive="torus"><span>Torus</span></button>
+              <div class="dropdown-divider"></div>
+              <button class="dropdown-item" type="button" data-add-light="point"><span>Point Light</span></button>
+              <button class="dropdown-item" type="button" data-add-light="spot"><span>Spot Light</span></button>
+              <button class="dropdown-item" type="button" data-add-light="directional"><span>Directional Sun</span></button>
+              <div class="dropdown-divider"></div>
+              <button class="dropdown-item" type="button" data-add-prefab="coin"><span>Collectible Coin</span></button>
+              <button class="dropdown-item" type="button" data-add-prefab="platform"><span>Moving Platform</span></button>
+              <button class="dropdown-item" type="button" data-add-prefab="hazard"><span>Laser Hazard</span></button>
+              <button class="dropdown-item" type="button" data-add-prefab="portal"><span>Goal Portal</span></button>
+            </div>
+          </div>
+
+          <div class="menu-item" id="menuTools">
+            <button class="menu-btn" type="button">Tools ▾</button>
+            <div class="dropdown-menu">
+              <button class="dropdown-item" type="button" id="menuActionAI"><span>AI Studio Assistant...</span><span class="shortcut">✨</span></button>
+              <button class="dropdown-item" type="button" id="menuActionPhysicsDebug"><span>Toggle Physics Wireframes</span></button>
+              <button class="dropdown-item" type="button" id="menuActionResetCamera"><span>Reset Viewport Camera</span></button>
+              <button class="dropdown-item" type="button" id="menuActionTakeScreenshot"><span>Capture Screenshot</span></button>
+            </div>
+          </div>
+
+          <div class="menu-item" id="menuHelp">
+            <button class="menu-btn" type="button">Help ▾</button>
+            <div class="dropdown-menu">
+              <button class="dropdown-item" type="button" id="menuActionShortcuts"><span>Keyboard Shortcuts</span><span class="shortcut">?</span></button>
+              <button class="dropdown-item" type="button" id="menuActionEngineDocs"><span>Engine Scripting API Docs</span></button>
+              <a class="dropdown-item" href="games.html" target="_blank" style="text-decoration:none;"><span>View Vexora Catalog</span></a>
+            </div>
+          </div>
+        </nav>
+
+        <!-- Transform Gizmo Mode Selector -->
+        <div class="tool-group" role="group" aria-label="Transform Tools">
+          <button class="tool-btn active" id="toolSelect" type="button" title="Select (Q)">↖</button>
+          <button class="tool-btn" id="toolTranslate" type="button" title="Move / Translate (W)">✥</button>
+          <button class="tool-btn" id="toolRotate" type="button" title="Rotate (E)">↻</button>
+          <button class="tool-btn" id="toolScale" type="button" title="Scale (R)">⤢</button>
+          <button class="tool-btn" id="toolSnap" type="button" title="Toggle Grid Snapping (S)">⊞</button>
+          <button class="tool-btn" id="toolSpace" type="button" title="Local / World Transform Mode">🌐</button>
+        </div>
+      </div>
+
+      <!-- CENTER: PLAY / PAUSE / STOP RUNTIME -->
+      <div class="toolbar-center">
+        <div class="playback-controls">
+          <button class="play-btn" id="btnPlayGame" type="button" title="Play Scene in Test Mode (Space)">
+            <span id="playIcon">▶</span>
+            <span id="playLabel">Play</span>
+          </button>
+          <button class="pause-btn" id="btnPauseGame" type="button" title="Pause Physics & Simulation" disabled>⏸</button>
+          <button class="stop-btn" id="btnStopGame" type="button" title="Stop & Restore Editor State" disabled>⏹</button>
+        </div>
+      </div>
+
+      <!-- RIGHT: ACTIONS & USER PROFILE -->
+      <div class="toolbar-right">
+        <div class="autosave-indicator" id="autosaveIndicator">
+          <span class="autosave-dot"></span>
+          <span id="autosaveText">Ready</span>
+        </div>
+
+        <button class="studio-btn studio-btn-ghost" id="btnAIAssistant" type="button">
+          <span>✨</span>
+          <span>AI Assist</span>
+        </button>
+
+        <button class="studio-btn studio-btn-primary" id="btnPublishProject" type="button">
+          <span>🚀</span>
+          <span>Publish to Vexora</span>
+        </button>
+
+        <a class="studio-user-badge" id="studioUserBadge" href="profile.html" target="_blank" title="Local prototype profile; accounts are not connected">
+          <span id="studioUserAvatar">👨🏻‍🚀</span>
+          <span id="studioUserName">Local Creator</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- MAIN 3-COLUMN WORKSPACE -->
+    <main class="studio-workspace" id="studioWorkspace">
+      <!-- LEFT SIDEBAR: HIERARCHY, ASSETS, PREFABS -->
+      <aside class="studio-panel" id="leftSidebar" aria-label="Project Explorer">
+        <div class="panel-header">
+          <div class="panel-header-tabs">
+            <button class="panel-tab active" id="tabHierarchy" type="button">Scene</button>
+            <button class="panel-tab" id="tabAssets" type="button">Assets</button>
+            <button class="panel-tab" id="tabPrefabs" type="button">Prefabs</button>
+          </div>
+          <div class="panel-actions">
+            <button class="icon-btn" id="btnAddObjectQuick" type="button" title="Add Object">+</button>
+          </div>
+        </div>
+
+        <!-- Hierarchy View -->
+        <div class="panel-content" id="hierarchyView">
+          <div class="panel-search">
+            <input type="search" id="hierarchySearch" placeholder="Search scene objects..." aria-label="Search hierarchy">
+          </div>
+          <ul class="hierarchy-tree" id="hierarchyTree" role="tree" aria-label="Scene Graph">
+            <!-- Dynamically populated -->
+          </ul>
+        </div>
+
+        <!-- Asset Browser View -->
+        <div class="panel-content" id="assetsView" hidden>
+          <div class="panel-search">
+            <input type="search" id="assetSearch" placeholder="Search assets..." aria-label="Search assets">
+          </div>
+          <div style="padding:8px 10px;display:flex;gap:6px;">
+            <button class="studio-btn studio-btn-ghost" id="btnUploadAsset" type="button" style="font-size:11px;padding:4px 8px;width:100%;">+ Upload Asset (GLB/PNG/WAV)</button>
+            <input type="file" id="fileAssetInput" style="display:none;" accept=".glb,.gltf,.obj,.png,.jpg,.jpeg,.webp,.wav,.mp3">
+          </div>
+          <div class="asset-grid" id="assetGrid">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Prefabs View -->
+        <div class="panel-content" id="prefabsView" hidden>
+          <div style="padding:10px;">
+            <p style="color:var(--studio-text-subtle);font-size:11px;margin-bottom:10px;">Click or drag pre-configured game mechanics into your 3D scene:</p>
+            <div class="asset-grid" id="prefabGrid">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- CENTER: 3D VIEWPORT & BOTTOM DOCK -->
+      <section class="studio-center-area" id="centerArea">
+        <!-- 3D VIEWPORT -->
+        <div class="viewport-container" id="viewportContainer">
+          <canvas id="viewportCanvas" aria-label="3D Game Scene Viewport"></canvas>
+
+          <!-- Top Viewport Overlays -->
+          <div class="viewport-overlay-top">
+            <div class="viewport-badges">
+              <span class="viewport-badge" id="cameraModeBadge">Cam: <strong>Perspective</strong></span>
+              <span class="viewport-badge" id="gizmoModeBadge">Mode: <strong>Translate (W)</strong></span>
+              <span class="viewport-badge" id="fpsBadge">FPS: <strong>60</strong></span>
+            </div>
+
+            <div class="viewport-tools">
+              <select class="viewport-select" id="shadingModeSelect" title="Viewport Shading Mode">
+                <option value="lit">Lit (PBR)</option>
+                <option value="wireframe">Wireframe</option>
+                <option value="unlit">Unlit Colors</option>
+                <option value="normals">Normal Vectors</option>
+              </select>
+
+              <select class="viewport-select" id="cameraAngleSelect" title="Camera Angle Preset">
+                <option value="persp">Perspective (3D)</option>
+                <option value="top">Top (Orthographic)</option>
+                <option value="front">Front View</option>
+                <option value="side">Side View</option>
+              </select>
+
+              <button class="icon-btn" id="btnToggleGrid" type="button" title="Toggle Grid Plane" style="background:rgba(18,24,36,0.85);width:28px;height:28px;border-radius:6px;border:1px solid var(--studio-border);">▦</button>
+              <button class="icon-btn" id="btnExpandViewport" type="button" title="Expand viewport (hide panels)" aria-label="Expand viewport" aria-pressed="false" style="background:rgba(18,24,36,0.85);width:28px;height:28px;border-radius:6px;border:1px solid var(--studio-border);">⛶</button>
+            </div>
+          </div>
+
+          <!-- In-Game Play Runtime HUD Overlay (Visible only when Play is active) -->
+          <div class="play-hud-overlay" id="playHudOverlay">
+            <div class="hud-topbar">
+              <div class="hud-stat-badge" id="hudScoreBadge">
+                <span class="badge-icon">🪙</span>
+                <span>Score: <strong id="hudScoreVal" style="color:var(--accent-amber);">0</strong></span>
+              </div>
+              <div class="hud-stat-badge" id="hudStageBadge">
+                <span class="badge-icon">🚩</span>
+                <span id="hudStageName">Stage Active</span>
+              </div>
+              <div class="hud-stat-badge" id="hudHealthBadge">
+                <span class="badge-icon">❤️</span>
+                <span>HP: <strong id="hudHealthVal" style="color:var(--accent-emerald);">100%</strong></span>
+              </div>
+            </div>
+
+            <div class="hud-center-toast" id="hudCenterToast">STAGE CLEARED!</div>
+
+            <!-- Stage Complete Screen -->
+            <div class="game-win-modal" id="gameWinModal">
+              <h2>🎉 VICTORY!</h2>
+              <p>You conquered this world!</p>
+              <div style="font-size:18px;font-weight:700;color:#ffffff;margin-bottom:20px;">
+                Final Score: <span id="winScoreDisplay" style="color:var(--accent-amber);">100</span>
+              </div>
+              <div style="display:flex;gap:10px;justify-content:center;">
+                <button class="studio-btn studio-btn-primary" id="btnRestartStage" type="button">Play Again</button>
+                <button class="studio-btn studio-btn-ghost" id="btnExitToEditor" type="button">Return to Editor</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOTTOM DOCK: CONSOLE, SCRIPT EDITOR, PERFORMANCE, AI ASSISTANT -->
+        <footer class="studio-panel bottom-dock" id="bottomDock">
+          <div class="panel-header">
+            <div class="panel-header-tabs">
+              <button class="panel-tab active" id="tabConsole" type="button">📟 Console</button>
+              <button class="panel-tab" id="tabScripts" type="button">📜 Scripts</button>
+              <button class="panel-tab" id="tabTimeline" type="button">⏱ Timeline</button>
+              <button class="panel-tab" id="tabStats" type="button">📊 Performance</button>
+              <button class="panel-tab" id="tabAIAssist" type="button" style="color:var(--accent-cyan);">✨ AI Assistant</button>
+            </div>
+            <div class="panel-actions">
+              <button class="icon-btn" id="btnClearConsole" type="button" title="Clear Console">✕</button>
+              <button class="icon-btn" id="btnToggleBottomDock" type="button" title="Minimize / Maximize Dock">↕</button>
+            </div>
+          </div>
+
+          <!-- Console Tab -->
+          <div class="panel-content" id="consoleTabContent">
+            <div class="console-logs" id="consoleLogs">
+              <div class="console-entry info"><span class="log-badge">INFO</span><span class="log-time">Studio</span><span>Vexora Studio 3D Engine initialized and ready.</span></div>
+            </div>
+          </div>
+
+          <!-- Scripts Tab -->
+          <div class="panel-content" id="scriptsTabContent" hidden>
+            <div class="script-editor-container">
+              <div class="script-file-list" id="scriptFileList">
+                <!-- Dynamically populated -->
+              </div>
+              <div class="script-editor-main">
+                <div class="script-editor-toolbar">
+                  <span id="activeScriptName" style="font-weight:700;color:var(--accent-cyan);">PlayerController.ts</span>
+                  <div style="display:flex;gap:6px;">
+                    <button class="studio-btn studio-btn-ghost" id="btnSaveScript" type="button" style="font-size:11px;padding:3px 8px;">Save Script</button>
+                    <button class="studio-btn studio-btn-ghost" id="btnNewScript" type="button" style="font-size:11px;padding:3px 8px;">+ New</button>
+                  </div>
+                </div>
+                <textarea class="code-area" id="scriptCodeArea" spellcheck="false" aria-label="TypeScript gameplay script"></textarea>
+              </div>
+              <div class="script-docs-sidebar">
+                <h4>Engine API</h4>
+                <div class="doc-snippet"><strong>Lifecycle</strong><br>start()<br>update(deltaTime)<br>fixedUpdate(1 / 60)<br>stop()</div>
+                <div class="doc-snippet"><strong>Engine.input</strong><br>isKeyDown('w')<br>getAxis('Horizontal')</div>
+                <div class="doc-snippet"><strong>Engine.scene</strong><br>findObject('Player')<br>spawnObject('box', 'Crate')<br>destroyObject(object)</div>
+                <div class="doc-snippet"><strong>Object</strong><br>this.object.position.x<br>this.object.translate(x, y, z)</div>
+                <div class="doc-snippet"><strong>Engine.ui / log</strong><br>addScore(10)<br>showToast('Ready!')<br>Engine.log('Started')</div>
+                <small style="color:var(--studio-text-subtle);line-height:1.5;">TypeScript is transpiled in your browser. Scripts run in a restricted sandbox; DOM, network, and filesystem access are blocked.</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Timeline Tab -->
+          <div class="panel-content" id="timelineTabContent" hidden style="padding:16px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+              <button class="studio-btn studio-btn-ghost" id="btnTimelinePlay" type="button">▶ Play Anim</button>
+              <button class="studio-btn studio-btn-ghost" id="btnAddKeyframe" type="button">+ Keyframe</button>
+              <span style="color:var(--studio-text-subtle);">Target: <strong id="timelineTargetObj" style="color:var(--studio-text);">Selected Object</strong></span>
+            </div>
+            <input type="range" id="timelineScrubber" min="0" max="100" value="0" style="width:100%;accent-color:var(--accent-cyan);">
+            <div style="display:flex;justify-content:space-between;color:var(--studio-text-subtle);font-size:10px;margin-top:4px;">
+              <span>0.0s (Start)</span>
+              <span>1.0s</span>
+              <span>2.0s</span>
+              <span>3.0s</span>
+              <span>4.0s (End)</span>
+            </div>
+          </div>
+
+          <!-- Stats Tab -->
+          <div class="panel-content" id="statsTabContent" hidden style="padding:16px;">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:12px;">
+              <div style="background:var(--studio-surface-elevated);padding:10px;border-radius:8px;border:1px solid var(--studio-border);">
+                <div style="color:var(--studio-text-subtle);font-size:11px;">FPS Rate</div>
+                <div style="font-size:22px;font-weight:800;color:var(--accent-emerald);" id="statFpsVal">60</div>
+              </div>
+              <div style="background:var(--studio-surface-elevated);padding:10px;border-radius:8px;border:1px solid var(--studio-border);">
+                <div style="color:var(--studio-text-subtle);font-size:11px;">Triangles</div>
+                <div style="font-size:22px;font-weight:800;color:var(--accent-cyan);" id="statTrianglesVal">1,240</div>
+              </div>
+              <div style="background:var(--studio-surface-elevated);padding:10px;border-radius:8px;border:1px solid var(--studio-border);">
+                <div style="color:var(--studio-text-subtle);font-size:11px;">Draw Calls</div>
+                <div style="font-size:22px;font-weight:800;color:var(--accent-indigo);" id="statDrawCallsVal">18</div>
+              </div>
+              <div style="background:var(--studio-surface-elevated);padding:10px;border-radius:8px;border:1px solid var(--studio-border);">
+                <div style="color:var(--studio-text-subtle);font-size:11px;">Objects in Scene</div>
+                <div style="font-size:22px;font-weight:800;color:var(--accent-amber);" id="statObjectsVal">14</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Assistant Tab -->
+          <div class="panel-content" id="aiTabContent" hidden>
+            <div class="ai-assistant-container">
+              <div class="ai-prompt-box">
+                <textarea id="aiPromptInput" placeholder="Describe the 3D level, obstacle course, or gameplay mechanic you want Vexora Studio AI to build...&#10;Example: 'Build a neon cyberpunk obby with 8 floating platforms, 2 rotating laser hurdles, 5 golden coins, and a victory portal at the end.'"></textarea>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <button class="studio-btn studio-btn-ghost" id="btnUndoAI" type="button" disabled>↩ Undo AI Action</button>
+                  <button class="studio-btn studio-btn-primary" id="btnGenerateAI" type="button">✨ Generate &amp; Build Scene</button>
+                </div>
+              </div>
+              <div class="ai-quick-prompts">
+                <p style="font-size:11px;font-weight:700;color:var(--studio-text-muted);text-transform:uppercase;">Quick AI Presets</p>
+                <button class="quick-prompt-chip" type="button" data-preset="obby">🏃 Create 3D Obstacle Course (Obby)</button>
+                <button class="quick-prompt-chip" type="button" data-preset="platforms">☁ Add 6 Moving &amp; Floating Platforms</button>
+                <button class="quick-prompt-chip" type="button" data-preset="coins">🪙 Scatter 12 Collectible Coins &amp; Portal</button>
+                <button class="quick-prompt-chip" type="button" data-preset="lava">🔥 Add Lava Hazard Pit with Stepping Stones</button>
+                <button class="quick-prompt-chip" type="button" data-preset="racing">🏎 Build Sci-Fi Hover Speedway Track</button>
+                <button class="quick-prompt-chip" type="button" data-preset="neon">🌌 Apply Cyberpunk Neon Sky &amp; Lighting</button>
+              </div>
+            </div>
+          </div>
+        </footer>
+      </section>
+
+      <!-- RIGHT SIDEBAR: INSPECTOR -->
+      <aside class="studio-panel inspector-panel" id="rightSidebar" aria-label="Object Inspector">
+        <div class="panel-header">
+          <span>Inspector</span>
+          <div class="panel-actions">
+            <button class="icon-btn" id="btnResetInspector" type="button" title="Deselect">✕</button>
+          </div>
+        </div>
+
+        <div class="panel-content" id="inspectorContent">
+          <!-- Shown when no object is selected -->
+          <div class="inspector-empty" id="inspectorEmptyState">
+            <div class="inspector-empty-icon">🔍</div>
+            <p>No game object selected.</p>
+            <p style="font-size:11px;margin-top:6px;color:var(--studio-text-subtle);">Click an object in the 3D viewport or hierarchy tree to inspect and edit its properties.</p>
+          </div>
+
+          <!-- Shown when object is selected -->
+          <div id="inspectorDetails" hidden>
+            <!-- Target Object Header -->
+            <div class="inspector-target-header">
+              <div class="target-title-row">
+                <input type="text" id="objNameInput" value="GameObject" placeholder="Object Name">
+                <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--studio-text-muted);">
+                  <input type="checkbox" id="objActiveToggle" checked> Active
+                </label>
+              </div>
+              <div class="target-meta-row">
+                <select id="objTagSelect" title="Object Tag">
+                  <option value="Default">Tag: Default</option>
+                  <option value="Player">Tag: Player</option>
+                  <option value="Platform">Tag: Platform</option>
+                  <option value="Collectible">Tag: Collectible</option>
+                  <option value="Hazard">Tag: Hazard</option>
+                  <option value="Goal">Tag: Goal Portal</option>
+                  <option value="Checkpoint">Tag: Checkpoint</option>
+                </select>
+                <select id="objLayerSelect" title="Object Layer">
+                  <option value="Default">Layer: Default</option>
+                  <option value="Props">Layer: Props</option>
+                  <option value="World">Layer: World</option>
+                  <option value="Physics">Layer: Physics</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Transform Component -->
+            <div class="component-card">
+              <div class="component-header">
+                <div class="component-title"><span class="comp-icon">✥</span><span>Transform</span></div>
+              </div>
+              <div class="component-body">
+                <div class="prop-row">
+                  <span class="prop-label">Position</span>
+                  <div class="vector3-input">
+                    <div class="vector-field"><span class="vector-tag x">X</span><input type="number" step="0.1" id="posX"></div>
+                    <div class="vector-field"><span class="vector-tag y">Y</span><input type="number" step="0.1" id="posY"></div>
+                    <div class="vector-field"><span class="vector-tag z">Z</span><input type="number" step="0.1" id="posZ"></div>
+                  </div>
+                </div>
+                <div class="prop-row">
+                  <span class="prop-label">Rotation</span>
+                  <div class="vector3-input">
+                    <div class="vector-field"><span class="vector-tag x">X</span><input type="number" step="1" id="rotX"></div>
+                    <div class="vector-field"><span class="vector-tag y">Y</span><input type="number" step="1" id="rotY"></div>
+                    <div class="vector-field"><span class="vector-tag z">Z</span><input type="number" step="1" id="rotZ"></div>
+                  </div>
+                </div>
+                <div class="prop-row">
+                  <span class="prop-label">Scale</span>
+                  <div class="vector3-input">
+                    <div class="vector-field"><span class="vector-tag x">X</span><input type="number" step="0.1" id="scaleX"></div>
+                    <div class="vector-field"><span class="vector-tag y">Y</span><input type="number" step="0.1" id="scaleY"></div>
+                    <div class="vector-field"><span class="vector-tag z">Z</span><input type="number" step="0.1" id="scaleZ"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mesh & Material Component -->
+            <div class="component-card" id="meshComponentCard">
+              <div class="component-header">
+                <div class="component-title"><span class="comp-icon">🎨</span><span>Mesh &amp; Material</span></div>
+              </div>
+              <div class="component-body">
+                <div class="prop-row">
+                  <span class="prop-label">Color</span>
+                  <div class="color-input-row">
+                    <input class="color-picker" type="color" id="matColor" value="#3b82f6">
+                    <input class="prop-input" type="text" id="matColorHex" value="#3b82f6" style="width:80px;font-family:var(--font-mono);font-size:11px;">
+                  </div>
+                </div>
+                <div class="prop-row">
+                  <span class="prop-label">Roughness</span>
+                  <div class="range-input-row">
+                    <input type="range" id="matRoughness" min="0" max="1" step="0.05" value="0.4">
+                    <span class="range-val" id="matRoughnessVal">0.4</span>
+                  </div>
+                </div>
+                <div class="prop-row">
+                  <span class="prop-label">Metallic</span>
+                  <div class="range-input-row">
+                    <input type="range" id="matMetallic" min="0" max="1" step="0.05" value="0.2">
+                    <span class="range-val" id="matMetallicVal">0.2</span>
+                  </div>
+                </div>
+                <div class="prop-row">
+                  <span class="prop-label">Emissive</span>
+                  <div class="color-input-row">
+                    <input class="color-picker" type="color" id="matEmissive" value="#000000">
+                    <input type="range" id="matEmissiveIntensity" min="0" max="5" step="0.1" value="0" style="flex:1;accent-color:var(--accent-cyan);">
+                  </div>
+                </div>
+                <div class="prop-row">
+                  <span class="prop-label">Wireframe</span>
+                  <input type="checkbox" id="matWireframe">
+                </div>
+              </div>
+            </div>
+
+            <div class="component-card" id="lightComponentCard" hidden>
+              <div class="component-header">
+                <div class="component-title"><span class="comp-icon">☼</span><span>Light</span></div>
+              </div>
+              <div class="component-body">
+                <div class="prop-row">
+                  <span class="prop-label">Color</span>
+                  <input class="color-picker" type="color" id="lightColor" value="#ffffff">
+                </div>
+                <div class="prop-row">
+                  <span class="prop-label">Intensity</span>
+                  <input class="prop-input" type="number" id="lightIntensity" min="0" step="0.1" value="1">
+                </div>
+              </div>
+            </div>
+
+            <!-- Physics & Collider Component -->
+            <div class="component-card" id="physicsComponentCard">
+              <div class="component-header">
+                <div class="component-title"><span class="comp-icon">⚡</span><span>Physics &amp; Collision</span></div>
+              </div>
+              <div class="component-body">
+                <div class="prop-row">
+                  <span class="prop-label">Body Type</span>
+                  <select class="prop-input" id="physBodyType">
+                    <option value="static">Static (Solid Level)</option>
+                    <option value="dynamic">Dynamic (Gravity &amp; Forces)</option>
+                    <option value="kinematic">Kinematic (Moving Script)</option>
+                  </select>
+                </div>
+                <div class="prop-row">
+                  <span class="prop-label">Collider</span>
+                  <select class="prop-input" id="physCollider">
+                    <option value="box">Box Collider</option>
+                    <option value="sphere">Sphere Collider</option>
+                    <option value="capsule">Capsule Collider</option>
+                    <option value="none">No Collider</option>
+                  </select>
+                </div>
+                <div class="prop-row">
+                  <span class="prop-label">Mass</span>
+                  <input class="prop-input" type="number" id="physMass" min="0.1" step="0.5" value="1.0">
+                </div>
+                <div class="prop-row">
+                  <span class="prop-label">Bounciness</span>
+                  <div class="range-input-row">
+                    <input type="range" id="physBounciness" min="0" max="1" step="0.05" value="0.2">
+                    <span class="range-val" id="physBouncinessVal">0.2</span>
+                  </div>
+                </div>
+                <div class="prop-row">
+                  <span class="prop-label">Is Trigger</span>
+                  <input type="checkbox" id="physIsTrigger">
+                </div>
+              </div>
+            </div>
+
+            <!-- Script Component -->
+            <div class="component-card" id="scriptComponentCard">
+              <div class="component-header">
+                <div class="component-title"><span class="comp-icon">📜</span><span>Script Logic</span></div>
+              </div>
+              <div class="component-body">
+                <div class="prop-row">
+                  <span class="prop-label">Attached</span>
+                  <select class="prop-input" id="objScriptSelect">
+                    <option value="none">None</option>
+                    <option value="PlayerController.ts">PlayerController.ts</option>
+                    <option value="MovingPlatform.ts">MovingPlatform.ts</option>
+                    <option value="RotatorHazard.ts">RotatorHazard.ts</option>
+                    <option value="CollectibleCoin.ts">CollectibleCoin.ts</option>
+                    <option value="Killzone.ts">Killzone.ts</option>
+                    <option value="SpeedBoost.ts">SpeedBoost.ts</option>
+                    <option value="GoalGate.ts">GoalGate.ts</option>
+                  </select>
+                </div>
+                <button class="studio-btn studio-btn-ghost" id="btnEditAttachedScript" type="button" style="width:100%;font-size:11px;margin-top:4px;">Edit Script in Code Editor</button>
+              </div>
+            </div>
+
+            <!-- Add Component Dropdown -->
+            <div class="add-component-bar">
+              <select class="add-comp-select" id="addCompSelect">
+                <option value="" disabled selected>+ Add Component</option>
+                <option value="light">Light Source</option>
+                <option value="audio">Audio Source (SFX)</option>
+                <option value="particles">Particle Emitter</option>
+                <option value="script">Custom Script</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <!-- STATUS BAR -->
+    <footer class="studio-statusbar" role="contentinfo">
+      <div class="statusbar-left">
+        <span class="stat-pill"><strong id="statusProjectName">My 3D Game</strong></span>
+        <span class="stat-pill">Engine: <strong>Vexora 3D 1.0</strong></span>
+        <span class="stat-pill">Renderer: <strong>WebGL2 (Three.js)</strong></span>
+        <span class="stat-pill" id="statusSelection">No Selection</span>
+      </div>
+      <div class="statusbar-right">
+        <span class="stat-pill">Objects: <strong id="statusObjCount">0</strong></span>
+        <span class="stat-pill">Grid Snap: <strong id="statusSnapState">ON (1m)</strong></span>
+        <span class="stat-pill">Publishing: <strong style="color:var(--accent-amber);">Local-only</strong></span>
+      </div>
+    </footer>
+
+    <!-- MODAL: NEW PROJECT / TEMPLATE WIZARD -->
+    <div class="modal-backdrop" id="modalNewProject">
+      <div class="studio-modal">
+        <div class="modal-header">
+          <h2>Create New 3D Project</h2>
+          <button class="icon-btn" id="btnCloseNewModal" type="button">✕</button>
+        </div>
+        <div class="modal-body">
+          <div style="margin-bottom:16px;">
+            <label style="display:block;font-size:12px;font-weight:700;color:var(--studio-text-muted);margin-bottom:6px;">Project Name</label>
+            <input class="prop-input" type="text" id="newProjectNameInput" value="My New 3D Game" style="font-size:14px;padding:8px 12px;max-width:400px;">
+          </div>
+          <p style="font-size:12px;font-weight:700;color:var(--studio-text-muted);margin-bottom:10px;">Select Starter Template:</p>
+          <div class="template-grid" id="templateGrid">
+            <!-- 10 Templates populated by JS -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="studio-btn studio-btn-ghost" id="btnCancelNewProject" type="button">Cancel</button>
+          <button class="studio-btn studio-btn-primary" id="btnConfirmNewProject" type="button">Create Project</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: PUBLISH TO VEXORA -->
+    <div class="modal-backdrop" id="modalPublish">
+      <div class="studio-modal" style="max-width:650px;">
+        <div class="modal-header">
+          <h2>🚀 Publish to Vexora Gaming Platform</h2>
+          <button class="icon-btn" id="btnClosePublishModal" type="button">✕</button>
+        </div>
+        <div class="modal-body">
+          <p style="color:var(--studio-text-muted);font-size:12px;margin-bottom:14px;">
+            Prepare your project for publishing. Publishing is unavailable until a Vexora account and build service are connected.
+          </p>
+          <div class="publish-preview-box">
+            <img id="publishThumbnailPreview" src="assets/hero-world.jpg" alt="Game Viewport Thumbnail">
+            <span style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.7);padding:3px 8px;border-radius:4px;font-size:10px;color:#ffffff;">Live 3D Capture</span>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div>
+              <label style="display:block;font-size:11px;font-weight:700;color:var(--studio-text-muted);margin-bottom:4px;">Game Title</label>
+              <input class="prop-input" type="text" id="publishTitleInput" value="My 3D Game">
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div>
+                <label style="display:block;font-size:11px;font-weight:700;color:var(--studio-text-muted);margin-bottom:4px;">Category</label>
+                <select class="prop-input" id="publishCategorySelect">
+                  <option value="Adventure">Adventure</option>
+                  <option value="Skill">Skill &amp; Parkour</option>
+                  <option value="Racing">Racing</option>
+                  <option value="Survival">Survival</option>
+                  <option value="Simulator">Simulator</option>
+                  <option value="Puzzle">Puzzle</option>
+                </select>
+              </div>
+              <div>
+                <label style="display:block;font-size:11px;font-weight:700;color:var(--studio-text-muted);margin-bottom:4px;">Version</label>
+                <input class="prop-input" type="text" id="publishVersionInput" value="1.0.0">
+              </div>
+            </div>
+
+            <div>
+              <label style="display:block;font-size:11px;font-weight:700;color:var(--studio-text-muted);margin-bottom:4px;">Description</label>
+              <textarea class="prop-input" id="publishDescInput" rows="3" style="resize:vertical;">Explore a custom 3D world created with Vexora Studio. Jump across platforms, dodge hazards, and reach the finish line!</textarea>
+            </div>
+
+            <div style="background:var(--studio-surface-elevated);padding:10px;border-radius:8px;border:1px solid var(--studio-border);font-size:11px;color:var(--studio-text-subtle);">
+              <strong>Local prototype:</strong> Project data is saved in this browser. Creator verification, build upload, and catalog publishing are not connected.
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="studio-btn studio-btn-ghost" id="btnCancelPublish" type="button">Cancel</button>
+          <button class="studio-btn studio-btn-primary" id="btnConfirmPublish" type="button">⚡ Publish Now</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: KEYBOARD SHORTCUTS -->
+    <div class="modal-backdrop" id="modalShortcuts">
+      <div class="studio-modal" style="max-width:550px;">
+        <div class="modal-header">
+          <h2>Vexora Studio Shortcuts</h2>
+          <button class="icon-btn" id="btnCloseShortcutsModal" type="button">✕</button>
+        </div>
+        <div class="modal-body" style="font-size:12px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div>
+              <h4 style="color:var(--accent-cyan);margin-bottom:8px;">Viewport &amp; Tools</h4>
+              <p><strong>Q</strong>: Select Tool</p>
+              <p><strong>W</strong>: Move / Translate</p>
+              <p><strong>E</strong>: Rotate</p>
+              <p><strong>R</strong>: Scale</p>
+              <p><strong>S</strong>: Toggle Grid Snapping</p>
+              <p><strong>V</strong>: Expand / Restore Viewport</p>
+              <p><strong>F</strong>: Focus Selected Object</p>
+              <p><strong>Del</strong>: Delete Object</p>
+              <p><strong>Ctrl + D</strong>: Duplicate</p>
+            </div>
+            <div>
+              <h4 style="color:var(--accent-cyan);margin-bottom:8px;">Playback &amp; File</h4>
+              <p><strong>Space</strong>: Play / Stop Scene</p>
+              <p><strong>Ctrl + S</strong>: Save Project</p>
+              <p><strong>Ctrl + Z</strong>: Undo</p>
+              <p><strong>Ctrl + Y</strong>: Redo</p>
+              <p><strong>Right Click + Drag</strong>: Orbit Camera</p>
+              <p><strong>Middle Click + Drag</strong>: Pan Camera</p>
+              <p><strong>Scroll Wheel</strong>: Zoom</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="studio-btn studio-btn-primary" id="btnDismissShortcuts" type="button">Got it</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT ENGINE MODULE -->
+  <script type="module" src="studio-engine.js?v=20261015-1"></script>
+</body>
+</html>

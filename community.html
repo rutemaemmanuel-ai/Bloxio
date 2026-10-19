@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#081326">
+  <title>Community — Vexora</title>
+  <link rel="stylesheet" href="style.css?v=20261018-2">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar"></header>
+    <main>
+      <section class="page-heading">
+        <div><p class="eyebrow">MADE BY THE COMMUNITY</p><h1>Community</h1><p>Creator updates, new worlds, and groups for players and game makers.</p></div>
+      </section>
+      <nav class="community-tabs" role="tablist" aria-label="Community sections">
+        <button class="community-tab active" type="button" role="tab" aria-selected="true" aria-controls="community-feed" data-community-tab="community-feed">Creator Feed</button>
+        <button class="community-tab" type="button" role="tab" aria-selected="false" aria-controls="community-creators" data-community-tab="community-creators">Creator Spotlights</button>
+        <button class="community-tab" type="button" role="tab" aria-selected="false" aria-controls="community-groups" data-community-tab="community-groups">Creator Groups</button>
+      </nav>
+      <section class="community-panel" id="community-feed" role="tabpanel">
+        <form id="localFeedForm" class="panel local-feed-form">
+          <label for="localFeedText">Share a creator or game update</label>
+          <textarea id="localFeedText" maxlength="240" placeholder="What are you building or planning?" required></textarea>
+          <button class="primary-button small" type="submit">Post update</button>
+        </form>
+        <div class="community-feed">
+          <article class="panel news-item"><div><span class="news-tag">Community Event</span><span class="muted-pill">Preview</span></div><h2>Community Hangout Weekend</h2><p>Find a new game to play together and share what you discover. Community events are illustrative until connected to a live service.</p></article>
+          <article class="panel news-item"><div><span class="news-tag">Creator Update</span><span class="muted-pill">Preview</span></div><h2>What creators are building</h2><p>Follow new worlds, development notes, and announcements from creators across Vexora.</p></article>
+          <article class="panel news-item"><div><span class="news-tag">What's New</span><span class="muted-pill">Preview</span></div><h2>Fresh from the community</h2><p>Season news and live announcements will appear here when community services are available.</p></article>
+        </div>
+        <p class="demo-note">Your posts and reactions are saved only in this browser and aren't visible to other players.</p>
+      </section>
+      <section class="community-panel" id="community-creators" role="tabpanel" hidden>
+        <div class="section-heading"><div><p class="eyebrow">MEET THE MAKERS</p><h2>Creator Spotlights</h2></div><p class="demo-note">Featured creators · Sample profiles</p></div>
+        <div class="community-feed">
+          <article class="panel news-item"><div><span class="news-tag">Creator Spotlight</span><span class="muted-pill">Featured</span></div><h2>KaiBuilds</h2><p>Designing colorful obstacle courses and sharing tips for building your first playable world.</p><a class="secondary-button small" href="profile.html?user=KaiBuilds">View creator profile</a></article>
+          <article class="panel news-item"><div><span class="news-tag">New World</span><span class="muted-pill">Preview</span></div><h2>NovaSpawn's latest build</h2><p>Explore a new community-made world and see how it came together.</p><a class="secondary-button small" href="profile.html?user=NovaSpawn">View creator profile</a></article>
+          <article class="panel news-item"><div><span class="news-tag">Creator News</span><span class="muted-pill">Preview</span></div><h2>Share your next project</h2><p>Creator announcements and game release notes will be collected here.</p><a class="secondary-button small" href="create.html">Start creating</a></article>
+        </div>
+      </section>
+      <section class="community-panel" id="community-groups" role="tabpanel" hidden>
+        <div class="section-heading"><div><p class="eyebrow">BUILD SOMETHING TOGETHER</p><h2>Creator Groups</h2></div><p class="demo-note">Sample groups · Membership isn't connected</p></div>
+        <div class="community-people-grid">
+          <article class="panel community-person"><span class="feature-icon blue" aria-hidden="true">🧱</span><div><strong>World Builders</strong><p>Share ideas, test new worlds, and learn game-building basics.</p></div><div class="community-person-actions"><span class="muted-pill">Creator group</span><span class="muted-pill">Open community</span></div></article>
+          <article class="panel community-person"><span class="feature-icon green" aria-hidden="true">🎨</span><div><strong>Art &amp; Game Design</strong><p>Talk level design, characters, and visual ideas for your next game.</p></div><div class="community-person-actions"><span class="muted-pill">Creator group</span><span class="muted-pill">Open community</span></div></article>
+          <article class="panel community-person"><span class="feature-icon purple" aria-hidden="true">🚀</span><div><strong>Indie Game Launchpad</strong><p>Meet creators and share works in progress and new releases.</p></div><div class="community-person-actions"><span class="muted-pill">Creator group</span><span class="muted-pill">Open community</span></div></article>
+        </div>
+      </section>
+      <footer><span class="brand-small"><span class="brand-mark">V</span> VEXORA</span><span>Play. Create. Explore.</span><span>© 2026 Vexora</span></footer>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="script.js?v=20261018-2"></script>
+  <script type="module" src="local-features.js?v=20261018-2"></script>
+</body>
+</html>

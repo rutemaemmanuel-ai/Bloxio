@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#081326">
+  <title>Friends — Vexora</title>
+  <link rel="stylesheet" href="style.css?v=20261018-2">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar"></header>
+    <main>
+      <section class="page-heading">
+        <div><p class="eyebrow">PLAY TOGETHER</p><h1>Friends</h1><p>Find your people, keep up with messages, and plan your next hangout.</p></div>
+      </section>
+      <nav class="community-tabs" role="tablist" aria-label="Friends sections">
+        <button class="community-tab active" type="button" role="tab" aria-selected="true" aria-controls="community-friends" data-community-tab="community-friends">Friends</button>
+        <button class="community-tab" type="button" role="tab" aria-selected="false" aria-controls="community-messages" data-community-tab="community-messages">Messages</button>
+        <button class="community-tab" type="button" role="tab" aria-selected="false" aria-controls="community-requests" data-community-tab="community-requests">Friend Requests</button>
+        <button class="community-tab" type="button" role="tab" aria-selected="false" aria-controls="community-followers" data-community-tab="community-followers">Followers</button>
+        <button class="community-tab" type="button" role="tab" aria-selected="false" aria-controls="community-following" data-community-tab="community-following">Following</button>
+        <button class="community-tab" type="button" role="tab" aria-selected="false" aria-controls="community-parties" data-community-tab="community-parties">Parties</button>
+      </nav>
+      <section class="community-panel" id="community-friends" role="tabpanel">
+        <div class="section-heading"><div><p class="eyebrow">YOUR PEOPLE</p><h2>Friends</h2></div><p class="demo-note">Sample contacts for this local prototype</p></div>
+        <p class="community-demo-note" id="communityFriendStatus">Presence is not connected; this setting is stored locally.</p>
+        <label class="community-player-search"><span aria-hidden="true">⌕</span><input id="communityPlayerSearch" type="search" placeholder="Search sample players..." aria-label="Search sample players"></label>
+        <div class="community-people-grid">
+          <article class="panel community-person"><span class="user-dot sky">L</span><div><strong>LunaRay</strong><p>Presence isn't connected</p></div><div class="community-person-actions"><a class="secondary-button small" href="profile.html?user=LunaRay">View profile</a><button class="primary-button small" type="button" data-open-message="LunaRay">Message</button></div></article>
+          <article class="panel community-person"><span class="user-dot coral">P</span><div><strong>PixelFox</strong><p>Presence isn't connected</p></div><div class="community-person-actions"><a class="secondary-button small" href="profile.html?user=PixelFox">View profile</a><button class="primary-button small" type="button" data-open-message="PixelFox">Message</button></div></article>
+          <article class="panel community-person"><span class="user-dot violet">N</span><div><strong>NovaSpawn</strong><p>Presence isn't connected</p></div><div class="community-person-actions"><a class="secondary-button small" href="profile.html?user=NovaSpawn">View profile</a><button class="primary-button small" type="button" data-open-message="NovaSpawn">Message</button></div></article>
+        </div>
+      </section>
+      <section class="community-panel" id="community-messages" role="tabpanel" hidden>
+        <div class="friends-workspace" id="inbox">
+          <aside class="panel friends-sidebar">
+            <div class="panel-header"><h2>Inbox</h2><span class="muted-pill">Local demo</span></div>
+            <label class="people-search"><span aria-hidden="true">⌕</span><input id="peopleSearch" type="search" placeholder="Search conversations..." aria-label="Search conversations"></label>
+            <div class="friends-list" data-friend-list="chats">
+              <button class="person-row selected" type="button" data-person="LunaRay" data-presence="Presence unavailable" data-avatar="L" data-color="sky"><span class="user-dot sky">L</span><span class="person-copy"><strong>LunaRay</strong><small>Party invite ready</small></span></button>
+              <button class="person-row" type="button" data-person="PixelFox" data-presence="Presence unavailable" data-avatar="P" data-color="coral"><span class="user-dot coral">P</span><span class="person-copy"><strong>PixelFox</strong><small>Want to hang out this weekend?</small></span></button>
+              <button class="person-row" type="button" data-person="NovaSpawn" data-presence="Presence unavailable" data-avatar="N" data-color="violet"><span class="user-dot violet">N</span><span class="person-copy"><strong>NovaSpawn</strong><small>Shared a cool build</small></span></button>
+            </div>
+            <p class="friends-empty" id="peopleEmpty" hidden>No conversations found.</p>
+          </aside>
+          <section class="panel chat-panel" aria-label="Conversation">
+            <header class="chat-header">
+              <button class="chat-back" id="chatBack" type="button" aria-label="Back to conversations">←</button>
+              <div class="chat-person"><span class="user-dot sky" id="chatAvatar">L</span><div><h2 id="chatName">LunaRay</h2><p id="chatPresence">Presence unavailable</p></div></div>
+            </header>
+            <div class="chat-history" id="chatHistory" aria-live="polite">
+              <p class="chat-date">Example messages</p>
+              <div class="chat-bubble received"><small>LunaRay</small>Hey! Want to join my hangout?</div>
+              <div class="chat-bubble sent"><small>You</small>Absolutely — what are we doing?</div>
+              <div class="chat-bubble received"><small>LunaRay</small>Movie night and a quick build session after.</div>
+            </div>
+            <form class="chat-composer" id="chatForm">
+              <label class="chat-input-wrap"><span class="sr-only">Write a local demo message</span><input id="chatInput" type="text" maxlength="500" placeholder="Write a local demo message..." autocomplete="off" required></label>
+              <button class="send-button" type="submit" aria-label="Send local demo message">➤</button>
+            </form>
+            <p class="demo-note">Messages stay in this browser and aren't delivered to other players.</p>
+          </section>
+        </div>
+      </section>
+      <section class="community-panel" id="community-requests" role="tabpanel" hidden>
+        <div class="section-heading"><div><p class="eyebrow">CONNECT WITH PLAYERS</p><h2>Friend Requests</h2></div></div>
+        <div class="community-list">
+          <article class="friend-row"><div class="friend-meta"><span class="user-dot gold">K</span><span><strong>KaiBuilds</strong><small>Sample request · 3 mutual friends</small></span></div><div class="request-actions"><button class="follow-button" type="button" data-request="accept">Accept</button><button class="follow-button" type="button" data-request="decline">Decline</button></div></article>
+          <article class="friend-row"><div class="friend-meta"><span class="user-dot rose">J</span><span><strong>JadeRunner</strong><small>Sample request · Creative collab</small></span></div><div class="request-actions"><button class="follow-button" type="button" data-request="accept">Accept</button><button class="follow-button" type="button" data-request="decline">Decline</button></div></article>
+        </div>
+        <p class="demo-note">Requests are sample data. Live friend requests require a connected account service.</p>
+      </section>
+      <section class="community-panel" id="community-followers" role="tabpanel" hidden>
+        <div class="section-heading"><div><p class="eyebrow">YOUR COMMUNITY</p><h2>Followers</h2></div></div>
+        <div class="community-list">
+          <article class="friend-row"><div class="friend-meta"><span class="user-dot sky">L</span><span><strong>LunaRay</strong><small>Sample follower</small></span></div><button class="follow-button following" type="button">Following</button></article>
+          <article class="friend-row"><div class="friend-meta"><span class="user-dot coral">P</span><span><strong>PixelFox</strong><small>Sample follower</small></span></div><button class="follow-button" type="button">Follow back</button></article>
+          <article class="friend-row"><div class="friend-meta"><span class="user-dot violet">N</span><span><strong>NovaSpawn</strong><small>Sample follower</small></span></div><button class="follow-button" type="button">Follow back</button></article>
+        </div>
+      </section>
+      <section class="community-panel" id="community-following" role="tabpanel" hidden>
+        <div class="section-heading"><div><p class="eyebrow">PLAYERS YOU FOLLOW</p><h2>Following</h2></div></div>
+        <div class="community-list">
+          <article class="friend-row"><div class="friend-meta"><span class="user-dot lime">M</span><span><strong>Milo</strong><small>Sample following list</small></span></div><button class="follow-button following" type="button">Following</button></article>
+          <article class="friend-row"><div class="friend-meta"><span class="user-dot gold">S</span><span><strong>Sora</strong><small>Sample following list</small></span></div><button class="follow-button following" type="button">Following</button></article>
+          <article class="friend-row"><div class="friend-meta"><span class="user-dot rose">V</span><span><strong>Vee</strong><small>Sample following list</small></span></div><button class="follow-button" type="button">Follow</button></article>
+        </div>
+      </section>
+      <section class="community-panel" id="community-parties" role="tabpanel" hidden>
+        <div class="panel party-creator">
+          <div><p class="eyebrow">PLAY TOGETHER</p><h2>Create a local hangout</h2><p>Set up a local social plan preview. Invites are saved only in this browser and are not sent to players.</p></div>
+          <form id="localPartyForm" class="local-party-form">
+            <label>Choose a vibe<select id="partyActivity" required><option value="Movie night">Movie night</option><option value="Creative jam">Creative jam</option><option value="Build session">Build session</option><option value="Study circle">Study circle</option><option value="Casual hangout">Casual hangout</option></select></label>
+            <label>Invite sample players<select id="partyPlayers" multiple size="3" aria-label="Choose sample players to invite"><option>LunaRay</option><option>PixelFox</option><option>NovaSpawn</option></select></label>
+            <button class="primary-button small" type="submit">Create hangout preview</button>
+          </form>
+        </div>
+        <div class="community-list" id="localPartyList" aria-live="polite"></div>
+        <p class="empty-state" id="localPartyEmpty">Your local hangout previews will appear here.</p>
+      </section>
+      <footer><span class="brand-small"><span class="brand-mark">V</span> VEXORA</span><span>Play. Create. Explore.</span><span>© 2026 Vexora</span></footer>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="script.js?v=20261018-2"></script>
+  <script type="module" src="local-features.js?v=20261018-2"></script>
+</body>
+</html>
