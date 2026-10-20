@@ -8,9 +8,17 @@
   },
   "scripts": {
     "start": "node serve.js",
-    "test": "node --test"
+    "test": "node --test",
+    "cf:dev": "wrangler dev",
+    "cf:db:create": "wrangler d1 create vexora-auth",
+    "cf:db:migrate:local": "wrangler d1 migrations apply vexora-auth --local",
+    "cf:db:migrate:remote": "wrangler d1 migrations apply vexora-auth --remote",
+    "cf:deploy": "wrangler deploy"
   },
   "dependencies": {
     "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "wrangler": "^4.151.2"
   }
 }

@@ -6,3 +6,15 @@
 **/package-lock.json
 **/wrangler.jsonc
 **/wrangler.toml
+.github
+data
+tests
+migrations
+AUTH_SETUP.md
+auth-store.js
+cloudflare-worker.js
+serve.js
+.assetsignore
+.gitignore
+.replit
+*.md

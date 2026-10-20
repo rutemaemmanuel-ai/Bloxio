@@ -1,0 +1,21 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "vexora-site",
+  "main": "cloudflare-worker.js",
+  "compatibility_date": "2026-10-20",
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    "html_handling": "none",
+    "run_worker_first": ["/api/*", "/", "/*.html"],
+    "not_found_handling": "404-page"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "vexora-auth",
+      "database_id": "fea8eb45-6a9b-4f3a-8678-ac4358aa753e",
+      "migrations_dir": "migrations"
+    }
+  ]
+}
