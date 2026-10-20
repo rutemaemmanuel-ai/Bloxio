@@ -6,6 +6,16 @@
   <meta name="theme-color" content="#081326">
   <meta name="description" content="Play, create, and explore on Vexora.">
   <title>Vexora — Play. Create. Explore.</title>
+  <script>
+    try {
+      if (sessionStorage.getItem('vexora-site-preview') !== 'true') {
+        window.location.replace('auth.html');
+      }
+    } catch (error) {
+      console.error('Unable to check the Vexora preview session.', error);
+      window.location.replace('auth.html');
+    }
+  </script>
   <link rel="preload" as="image" href="assets/hero-bg-1.jpg" fetchpriority="high">
   <link rel="stylesheet" href="style.css?v=20261018-1">
 </head>
