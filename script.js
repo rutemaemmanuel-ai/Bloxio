@@ -17,11 +17,11 @@ if (sharedHeader) {
       <details class="account-menu">
         <summary class="avatar" aria-label="Open account menu"><span class="avatar-label">👨🏻‍🚀</span></summary>
         <div class="account-dropdown" aria-label="Account menu">
+          <p class="account-identity" id="accountIdentity" hidden></p>
           <a href="profile.html">My Profile</a>
           <a href="store.html#coins">Wallet &amp; Transactions</a>
           <a href="settings.html">Account Settings</a>
-          <button type="button" disabled aria-describedby="signOutNote">Sign Out</button>
-          <p id="signOutNote">Sign out will be available when accounts are connected.</p>
+          <button type="button" id="signOutButton">Sign Out</button>
         </div>
       </details>
     </div>`;
@@ -40,6 +40,8 @@ const menuToggle = document.getElementById('menuToggle');
 const mainNav = document.getElementById('mainNav');
 const headerAvatar = document.querySelector('.avatar');
 const viewAll = document.getElementById('viewAll');
+const accountIdentity = document.getElementById('accountIdentity');
+const signOutButton = document.getElementById('signOutButton');
 let toastTimer;
 
 if (headerAvatar) {
@@ -53,6 +55,42 @@ function showToast(message) {
   toast.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+}
+
+if (accountIdentity && signOutButton) {
+  fetch('/api/auth/me', { credentials: 'same-origin' })
+    .then(async response => {
+      if (!response.ok) throw new Error('Unable to load your account details.');
+      const result = await response.json();
+      if (!result.authenticated) {
+        window.location.replace('/auth.html');
+        return;
+      }
+      accountIdentity.textContent = `${result.user.username} · ${result.user.email}`;
+      accountIdentity.hidden = false;
+    })
+    .catch(error => {
+      console.error('Unable to load the signed-in Vexora account.', error);
+      showToast('Unable to load your account details. Please refresh the page.');
+    });
+
+  signOutButton.addEventListener('click', async () => {
+    signOutButton.disabled = true;
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: '{}'
+      });
+      if (!response.ok) throw new Error('Sign out failed. Please try again.');
+      window.location.assign('/auth.html');
+    } catch (error) {
+      console.error('Unable to sign out of the Vexora account.', error);
+      showToast(error.message || 'Unable to sign out. Please try again.');
+      signOutButton.disabled = false;
+    }
+  });
 }
 
 function setActiveNav() {

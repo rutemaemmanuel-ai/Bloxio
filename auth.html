@@ -57,40 +57,32 @@
           <button class="auth-tab" id="loginTab" type="button" role="tab" aria-selected="false" aria-controls="loginForm" tabindex="-1">Log in</button>
         </div>
 
-        <div class="prototype-notice" role="note">
-          <span aria-hidden="true">ⓘ</span>
-          <p><strong>Design preview:</strong> Authentication isn't connected yet. Don't enter a real password—nothing is sent or saved.</p>
-        </div>
-
-        <div id="signupForm" class="auth-form" role="tabpanel" aria-labelledby="signupTab">
+        <form id="signupForm" class="auth-form" role="tabpanel" aria-labelledby="signupTab">
           <label for="signupName">Username</label>
-          <input id="signupName" type="text" placeholder="Choose a username" autocomplete="off" required minlength="2">
+          <input id="signupName" name="username" type="text" placeholder="Choose a username" autocomplete="username" required minlength="3" maxlength="24" pattern="[A-Za-z0-9_]+">
 
           <label for="signupEmail">Email address</label>
-          <input id="signupEmail" type="email" placeholder="you@example.com" autocomplete="off" required>
+          <input id="signupEmail" name="email" type="email" placeholder="you@example.com" autocomplete="email" required maxlength="254">
 
           <label for="signupPassword">Password</label>
-          <input id="signupPassword" type="password" placeholder="At least 8 characters" autocomplete="new-password" required minlength="8">
+          <input id="signupPassword" name="password" type="password" placeholder="At least 12 characters" autocomplete="new-password" required minlength="12" maxlength="128">
 
-          <button class="auth-submit" type="button" data-form="signupForm">Create account <span aria-hidden="true">→</span></button>
-        </div>
+          <button class="auth-submit" type="submit">Create account <span aria-hidden="true">→</span></button>
+        </form>
 
-        <div id="loginForm" class="auth-form" role="tabpanel" aria-labelledby="loginTab" hidden>
+        <form id="loginForm" class="auth-form" role="tabpanel" aria-labelledby="loginTab" hidden>
           <label for="loginEmail">Email address</label>
-          <input id="loginEmail" type="email" placeholder="you@example.com" autocomplete="off" required>
+          <input id="loginEmail" name="email" type="email" placeholder="you@example.com" autocomplete="email" required maxlength="254">
 
           <label for="loginPassword">Password</label>
-          <input id="loginPassword" type="password" placeholder="Enter your password" autocomplete="current-password" required>
+          <input id="loginPassword" name="password" type="password" placeholder="Enter your password" autocomplete="current-password" required maxlength="128">
 
-          <button class="auth-submit" type="button" data-form="loginForm">Log in <span aria-hidden="true">→</span></button>
-        </div>
+          <button class="auth-submit" type="submit">Log in <span aria-hidden="true">→</span></button>
+        </form>
 
         <p class="auth-status" id="authStatus" role="status" aria-live="polite" hidden></p>
-        <a class="preview-link" id="previewLink" href="index.html" hidden>Explore the site preview <span aria-hidden="true">→</span></a>
 
-        <div class="auth-divider"><span>OR</span></div>
-        <a class="browse-link" href="index.html" data-preview-link>Browse the site preview</a>
-        <p class="auth-terms">Terms and Privacy Policy will be available when accounts are connected.</p>
+        <p class="auth-terms">Your account stays private. Your password is stored securely as a one-way hash.</p>
       </div>
       <p class="panel-footer">© 2026 Vexora</p>
     </section>

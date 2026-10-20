@@ -1,0 +1,16 @@
+{
+  "name": "vexora-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Vexora games and creator community website",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node serve.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "pg": "^8.16.3"
+  }
+}

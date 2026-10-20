@@ -3,7 +3,6 @@ const forms = [...document.querySelectorAll('.auth-form')];
 const heading = document.getElementById('authHeading');
 const intro = document.getElementById('authIntro');
 const status = document.getElementById('authStatus');
-const previewLink = document.getElementById('previewLink');
 
 function selectAuthTab(selectedTab) {
   tabs.forEach(tab => {
@@ -22,7 +21,6 @@ function selectAuthTab(selectedTab) {
     ? 'Join the community and make something unforgettable.'
     : 'Sign in to continue your Vexora adventure.';
   status.hidden = true;
-  previewLink.hidden = true;
 }
 
 tabs.forEach((tab, index) => {
@@ -36,31 +34,61 @@ tabs.forEach((tab, index) => {
   });
 });
 
-document.querySelectorAll('.auth-submit').forEach(button => {
-  button.addEventListener('click', () => {
-    const form = document.getElementById(button.dataset.form);
-    const invalidField = [...form.querySelectorAll('input')].find(field => !field.checkValidity());
-    if (invalidField) {
-      invalidField.reportValidity();
-      return;
-    }
+function showStatus(message) {
+  status.textContent = message;
+  status.hidden = false;
+}
 
-    status.textContent = 'This is a design preview only. No account was created and your entries were not sent or saved.';
-    status.hidden = false;
-    previewLink.hidden = false;
-    previewLink.focus();
-  });
-});
+async function readResponse(response) {
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(body.error || 'Unable to complete your request. Please try again.');
+  }
+  return body;
+}
 
-document.querySelectorAll('[data-preview-link], #previewLink').forEach(link => {
-  link.addEventListener('click', event => {
+forms.forEach(form => {
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    if (!form.reportValidity()) return;
+
+    const button = form.querySelector('.auth-submit');
+    const originalLabel = button.firstChild.textContent;
+    button.disabled = true;
+    button.firstChild.textContent = form.id === 'signupForm' ? 'Creating account… ' : 'Signing in… ';
+    status.hidden = true;
+
     try {
-      sessionStorage.setItem('vexora-site-preview', 'true');
+      const body = Object.fromEntries(new FormData(form).entries());
+      const endpoint = form.id === 'signupForm' ? '/api/auth/signup' : '/api/auth/login';
+      await readResponse(await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify(body)
+      }));
+      window.location.assign('/');
     } catch (error) {
-      event.preventDefault();
-      status.textContent = 'Your browser blocked session storage, so the site preview could not be opened. Enable browser storage and try again.';
-      status.hidden = false;
-      console.error('Unable to open the Vexora preview because session storage is unavailable.', error);
+      showStatus(error.message || 'Unable to reach the account service. Please try again.');
+    } finally {
+      button.disabled = false;
+      button.firstChild.textContent = originalLabel;
     }
   });
 });
+
+fetch('/api/auth/me', { credentials: 'same-origin' })
+  .then(readResponse)
+  .then(result => {
+    if (result.authenticated) window.location.replace('/');
+  })
+  .catch(error => {
+    if (error.message === 'Account service is not configured. Set DATABASE_URL and restart the server.') {
+      showStatus(error.message);
+    } else if (error instanceof TypeError) {
+      showStatus('Unable to reach the account service. Please try again.');
+    } else {
+      console.error('Unable to check the Vexora sign-in session.', error);
+      showStatus('Unable to check your sign-in session. Please refresh the page.');
+    }
+  });
