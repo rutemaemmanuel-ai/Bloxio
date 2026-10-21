@@ -27,6 +27,7 @@ jobs:
         run: |
           mkdir _site
           cp ./*.html ./*.css ./*.js _site/
+          cp ./*.ico ./*.png ./*.xml ./*.txt _site/
           rm _site/serve.js
           cp -R assets _site/assets
           touch _site/.nojekyll
