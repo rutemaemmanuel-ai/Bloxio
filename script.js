@@ -2,7 +2,7 @@ const sharedHeader = document.querySelector('.topbar');
 if (sharedHeader) {
   sharedHeader.innerHTML = `
     <button class="menu-toggle" id="menuToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false">☰</button>
-    <a class="brand" href="index.html" aria-label="Vexora home"><span class="brand-mark">V</span><span>VEXORA</span></a>
+    <a class="brand" href="index.html" aria-label="Bloxio home"><img class="brand-logo" src="assets/bloxio-logo.jpg" alt="Bloxio" width="140" height="52"></a>
     <nav class="main-nav" id="mainNav" aria-label="Main navigation">
       <a class="nav-link" href="index.html">Home</a>
       <a class="nav-link" href="games.html">Games</a>
@@ -68,7 +68,7 @@ if (accountIdentity && signOutButton) {
       accountIdentity.hidden = false;
     })
     .catch(error => {
-      console.error('Unable to load the signed-in Vexora account.', error);
+      console.error('Unable to load the signed-in Bloxio account.', error);
       showToast('Unable to load your account details. Please refresh the page.');
     });
 
@@ -84,7 +84,7 @@ if (accountIdentity && signOutButton) {
       if (!response.ok) throw new Error('Sign out failed. Please try again.');
       window.location.assign('/auth.html');
     } catch (error) {
-      console.error('Unable to sign out of the Vexora account.', error);
+      console.error('Unable to sign out of the Bloxio account.', error);
       showToast(error.message || 'Unable to sign out. Please try again.');
       signOutButton.disabled = false;
     }
@@ -142,7 +142,7 @@ function readFavoriteGames() {
     ]);
     return new Set(favorites.map(game => legacyIds.get(game) || game));
   } catch (error) {
-    console.error('Unable to read saved Vexora favorites.', error);
+    console.error('Unable to read saved Bloxio favorites.', error);
     return new Set();
   }
 }
@@ -230,7 +230,7 @@ if (gameDetail) {
   const game = gameCatalog[slug];
   const missingGame = document.getElementById('gameNotFound');
   if (game) {
-    document.title = `${game.name} — Vexora`;
+    document.title = `${game.name} — Bloxio`;
     document.getElementById('gameBreadcrumb').textContent = game.name;
     document.getElementById('gameDetailTitle').textContent = game.name;
     document.getElementById('gameDetailDescription').textContent = game.description;
@@ -523,7 +523,7 @@ if (friendsWorkspace) {
         conversations[person] = messages;
       });
     } catch (error) {
-      console.error('Unable to read saved Vexora demo conversations.', error);
+      console.error('Unable to read saved Bloxio demo conversations.', error);
     }
   }
 
@@ -1019,7 +1019,7 @@ if (heroCarousel) {
       imageAlt: 'A colorful floating island game world',
       eyebrow: 'YOUR NEXT ADVENTURE STARTS HERE',
       titleLine: 'Welcome to',
-      titleAccent: 'Vexora',
+      titleAccent: 'Bloxio',
       tagline: 'Play. Create. Explore.',
       description: 'Discover amazing games, build your own worlds, and hang out with friends — all in one place.',
       cta: 'Start Playing',

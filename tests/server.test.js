@@ -33,7 +33,7 @@ test('serves every page without requiring a session', async () => {
   }
 
   const landing = await (await fetch(`${baseUrl}/`)).text();
-  assert.match(landing, /Vexora/);
+  assert.match(landing, /Bloxio/);
 });
 
 test('keeps the sign-in page public and explains missing database configuration', async () => {

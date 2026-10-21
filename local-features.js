@@ -15,7 +15,7 @@
         if (!validate(parsed)) throw new TypeError(`Invalid saved data for ${key}.`);
         return parsed;
       } catch (error) {
-        console.error(`Unable to read local Vexora data (${key}).`, error);
+        console.error(`Unable to read local Bloxio data (${key}).`, error);
         return fallback;
       }
     },
@@ -24,7 +24,7 @@
         localStorage.setItem(key, JSON.stringify(value));
         return true;
       } catch (error) {
-        console.error(`Unable to save local Vexora data (${key}).`, error);
+        console.error(`Unable to save local Bloxio data (${key}).`, error);
         window.dispatchEvent(new CustomEvent('vexora:local-save-error', { detail: { key } }));
         return false;
       }

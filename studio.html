@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0b0f17">
-  <title>Vexora Studio — 3D Game Engine & Editor</title>
+  <title>Bloxio Studio — 3D Game Engine & Editor</title>
   <link rel="stylesheet" href="studio.css?v=20261015-1">
 </head>
 <body>
@@ -12,9 +12,9 @@
     <!-- TOP TOOLBAR & MENUS -->
     <header class="studio-toolbar" role="toolbar" aria-label="Studio Toolbar">
       <div class="toolbar-left">
-        <a class="studio-brand" href="create.html" title="Back to Vexora Creator Dashboard">
+        <a class="studio-brand" href="create.html" title="Back to Bloxio Creator Dashboard">
           <span class="studio-logo-badge">V</span>
-          <span>VEXORA <span style="color:var(--accent-cyan);font-weight:400;">STUDIO</span></span>
+          <span>BLOXIO <span style="color:var(--accent-cyan);font-weight:400;">STUDIO</span></span>
         </a>
 
         <div class="project-name-badge" id="projectNameBadge" title="Click to rename project">
@@ -33,11 +33,11 @@
               <button class="dropdown-item" type="button" id="menuActionExportJson"><span>Export Project JSON</span><span class="shortcut">Ctrl+E</span></button>
               <button class="dropdown-item" type="button" id="menuActionImportJson"><span>Import Project JSON...</span></button>
               <div class="dropdown-divider"></div>
-              <button class="dropdown-item" type="button" id="menuActionPublish"><span>Publish to Vexora...</span><span class="shortcut" style="color:var(--accent-cyan);">⚡</span></button>
+              <button class="dropdown-item" type="button" id="menuActionPublish"><span>Publish to Bloxio...</span><span class="shortcut" style="color:var(--accent-cyan);">⚡</span></button>
               <div class="dropdown-divider"></div>
               <button class="dropdown-item" type="button" id="menuActionDeleteProject"><span>Delete Current Project...</span></button>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="create.html" style="text-decoration:none;"><span>Exit to Vexora Hub</span></a>
+              <a class="dropdown-item" href="create.html" style="text-decoration:none;"><span>Exit to Bloxio Hub</span></a>
             </div>
           </div>
 
@@ -90,7 +90,7 @@
             <div class="dropdown-menu">
               <button class="dropdown-item" type="button" id="menuActionShortcuts"><span>Keyboard Shortcuts</span><span class="shortcut">?</span></button>
               <button class="dropdown-item" type="button" id="menuActionEngineDocs"><span>Engine Scripting API Docs</span></button>
-              <a class="dropdown-item" href="games.html" target="_blank" style="text-decoration:none;"><span>View Vexora Catalog</span></a>
+              <a class="dropdown-item" href="games.html" target="_blank" style="text-decoration:none;"><span>View Bloxio Catalog</span></a>
             </div>
           </div>
         </nav>
@@ -132,7 +132,7 @@
 
         <button class="studio-btn studio-btn-primary" id="btnPublishProject" type="button">
           <span>🚀</span>
-          <span>Publish to Vexora</span>
+          <span>Publish to Bloxio</span>
         </button>
 
         <a class="studio-user-badge" id="studioUserBadge" href="profile.html" target="_blank" title="Local prototype profile; accounts are not connected">
@@ -279,7 +279,7 @@
           <!-- Console Tab -->
           <div class="panel-content" id="consoleTabContent">
             <div class="console-logs" id="consoleLogs">
-              <div class="console-entry info"><span class="log-badge">INFO</span><span class="log-time">Studio</span><span>Vexora Studio 3D Engine initialized and ready.</span></div>
+              <div class="console-entry info"><span class="log-badge">INFO</span><span class="log-time">Studio</span><span>Bloxio Studio 3D Engine initialized and ready.</span></div>
             </div>
           </div>
 
@@ -354,7 +354,7 @@
           <div class="panel-content" id="aiTabContent" hidden>
             <div class="ai-assistant-container">
               <div class="ai-prompt-box">
-                <textarea id="aiPromptInput" placeholder="Describe the 3D level, obstacle course, or gameplay mechanic you want Vexora Studio AI to build...&#10;Example: 'Build a neon cyberpunk obby with 8 floating platforms, 2 rotating laser hurdles, 5 golden coins, and a victory portal at the end.'"></textarea>
+                <textarea id="aiPromptInput" placeholder="Describe the 3D level, obstacle course, or gameplay mechanic you want Bloxio Studio AI to build...&#10;Example: 'Build a neon cyberpunk obby with 8 floating platforms, 2 rotating laser hurdles, 5 golden coins, and a victory portal at the end.'"></textarea>
                 <div style="display:flex;justify-content:space-between;align-items:center;">
                   <button class="studio-btn studio-btn-ghost" id="btnUndoAI" type="button" disabled>↩ Undo AI Action</button>
                   <button class="studio-btn studio-btn-primary" id="btnGenerateAI" type="button">✨ Generate &amp; Build Scene</button>
@@ -593,7 +593,7 @@
     <footer class="studio-statusbar" role="contentinfo">
       <div class="statusbar-left">
         <span class="stat-pill"><strong id="statusProjectName">My 3D Game</strong></span>
-        <span class="stat-pill">Engine: <strong>Vexora 3D 1.0</strong></span>
+        <span class="stat-pill">Engine: <strong>Bloxio 3D 1.0</strong></span>
         <span class="stat-pill">Renderer: <strong>WebGL2 (Three.js)</strong></span>
         <span class="stat-pill" id="statusSelection">No Selection</span>
       </div>
@@ -628,16 +628,16 @@
       </div>
     </div>
 
-    <!-- MODAL: PUBLISH TO VEXORA -->
+    <!-- MODAL: PUBLISH TO BLOXIO -->
     <div class="modal-backdrop" id="modalPublish">
       <div class="studio-modal" style="max-width:650px;">
         <div class="modal-header">
-          <h2>🚀 Publish to Vexora Gaming Platform</h2>
+          <h2>🚀 Publish to Bloxio Gaming Platform</h2>
           <button class="icon-btn" id="btnClosePublishModal" type="button">✕</button>
         </div>
         <div class="modal-body">
           <p style="color:var(--studio-text-muted);font-size:12px;margin-bottom:14px;">
-            Prepare your project for publishing. Publishing is unavailable until a Vexora account and build service are connected.
+            Prepare your project for publishing. Publishing is unavailable until a Bloxio account and build service are connected.
           </p>
           <div class="publish-preview-box">
             <img id="publishThumbnailPreview" src="assets/hero-world.jpg" alt="Game Viewport Thumbnail">
@@ -670,7 +670,7 @@
 
             <div>
               <label style="display:block;font-size:11px;font-weight:700;color:var(--studio-text-muted);margin-bottom:4px;">Description</label>
-              <textarea class="prop-input" id="publishDescInput" rows="3" style="resize:vertical;">Explore a custom 3D world created with Vexora Studio. Jump across platforms, dodge hazards, and reach the finish line!</textarea>
+              <textarea class="prop-input" id="publishDescInput" rows="3" style="resize:vertical;">Explore a custom 3D world created with Bloxio Studio. Jump across platforms, dodge hazards, and reach the finish line!</textarea>
             </div>
 
             <div style="background:var(--studio-surface-elevated);padding:10px;border-radius:8px;border:1px solid var(--studio-border);font-size:11px;color:var(--studio-text-subtle);">
@@ -689,7 +689,7 @@
     <div class="modal-backdrop" id="modalShortcuts">
       <div class="studio-modal" style="max-width:550px;">
         <div class="modal-header">
-          <h2>Vexora Studio Shortcuts</h2>
+          <h2>Bloxio Studio Shortcuts</h2>
           <button class="icon-btn" id="btnCloseShortcutsModal" type="button">✕</button>
         </div>
         <div class="modal-body" style="font-size:12px;">

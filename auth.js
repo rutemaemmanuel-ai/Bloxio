@@ -19,7 +19,7 @@ function selectAuthTab(selectedTab) {
   heading.textContent = isSignup ? 'Create your account' : 'Welcome back';
   intro.textContent = isSignup
     ? 'Join the community and make something unforgettable.'
-    : 'Sign in to continue your Vexora adventure.';
+    : 'Sign in to continue your Bloxio adventure.';
   status.hidden = true;
 }
 
@@ -88,7 +88,7 @@ fetch('/api/auth/me', { credentials: 'same-origin' })
     } else if (error instanceof TypeError) {
       showStatus('Unable to reach the account service. Please try again.');
     } else {
-      console.error('Unable to check the Vexora sign-in session.', error);
+      console.error('Unable to check the Bloxio sign-in session.', error);
       showStatus('Unable to check your sign-in session. Please refresh the page.');
     }
   });

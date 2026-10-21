@@ -10,6 +10,8 @@ button{color:inherit}
 .app-shell{max-width:1600px;margin:auto;padding:0 42px 28px}
 .topbar{height:94px;display:flex;align-items:center;gap:28px}
 .brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:27px;letter-spacing:.2px;white-space:nowrap}
+.brand-logo{display:block;width:140px;height:52px;object-fit:cover;object-position:center;border-radius:10px}
+@media(max-width:760px){.brand-logo{width:114px;height:42px}}
 .brand-mark{display:inline-grid;place-items:center;width:48px;height:44px;color:#6573ff;font-size:52px;line-height:1;font-weight:900;letter-spacing:-9px;transform:skew(-9deg);padding-right:7px;text-shadow:0 0 24px #566aff50}
 .main-nav{display:flex;align-items:center;gap:20px}
 .nav-link{padding:12px 17px;border-radius:25px;font-weight:600;color:#f0f4ff;transition:.2s;line-height:1}

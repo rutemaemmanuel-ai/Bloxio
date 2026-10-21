@@ -183,7 +183,7 @@ async function handleAuth(request, env, pathname) {
       const user = await currentUser(request, db);
       return jsonResponse({ authenticated: Boolean(user), user });
     } catch (error) {
-      console.error('Unable to check the Vexora session.', error);
+      console.error('Unable to check the Bloxio session.', error);
       return jsonResponse({ error: 'Account service is temporarily unavailable.' }, 503);
     }
   }
@@ -276,7 +276,7 @@ async function handleAuth(request, env, pathname) {
       'Set-Cookie': sessionCookie(sessionToken)
     });
   } catch (error) {
-    console.error('Vexora authentication request failed.', error);
+    console.error('Bloxio authentication request failed.', error);
     return jsonResponse({ error: 'Account service is temporarily unavailable. Please try again.' }, 500);
   }
 }
@@ -306,7 +306,7 @@ export default {
           return Response.redirect(new URL('/', request.url), 302);
         }
       } catch (error) {
-        console.error('Unable to check the Vexora sign-in session.', error);
+        console.error('Unable to check the Bloxio sign-in session.', error);
       }
     }
 

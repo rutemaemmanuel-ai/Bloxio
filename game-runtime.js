@@ -39,7 +39,7 @@
     'mega-parkour': ['Cloudstep Isles', 'Sunken Temple', 'Frostline Ridge', 'Emberworks', 'The Sky Crown'],
     'sky-racing': ['Sunset Coast', 'Pinewind Pass', 'Neon Expressway', 'Cinder Tunnels', 'Aurora Run'],
     'island-survival': ['Driftwood Bay', 'Canopy Trail', 'Moonlit Cavern', 'Storm Cliffs', 'The Quiet Lagoon'],
-    'city-tycoon': ['Harbor District', 'Garden Quarter', 'Market Square', 'Skyline Heights', 'Vexora Central'],
+    'city-tycoon': ['Harbor District', 'Garden Quarter', 'Market Square', 'Skyline Heights', 'Bloxio Central'],
     'obby-challenge': ['The Old Courtyard', 'Clockwork Hall', 'Mossy Aqueduct', 'The Foundry', 'Summit Observatory']
   };
   const THEMES = {
@@ -1240,7 +1240,7 @@
       }
       wasPlayingWhenContextLost = false;
     } catch (error) {
-      console.error('Unable to restore the VEXORA 3D game renderer.', error);
+      console.error('Unable to restore the BLOXIO 3D game renderer.', error);
       setStatus('Graphics could not be restored · reload this page to try again');
     }
   });
@@ -1256,7 +1256,7 @@
       try {
         setupGraphics();
       } catch (error) {
-        console.error('Unable to initialize the VEXORA 3D game renderer.', error);
+        console.error('Unable to initialize the BLOXIO 3D game renderer.', error);
         levelScreen.hidden = true;
         showState('GRAPHICS UNAVAILABLE', 'Unable to start this game', error.message, [
           { label: 'Close message', primary: true, run: () => { panel.hidden = true; } }

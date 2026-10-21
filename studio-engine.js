@@ -131,7 +131,7 @@ export default class RotatorHazard {
       }
       return value;
     } catch (error) {
-      console.error('Unable to read Vexora Studio projects.', error);
+      console.error('Unable to read Bloxio Studio projects.', error);
       log(`Unable to load saved projects: ${error.message}`, 'error');
       return [];
     }
@@ -142,7 +142,7 @@ export default class RotatorHazard {
     $('#currentProjectTitle').textContent = name;
     $('#statusProjectName').textContent = name;
     $('#publishTitleInput').value = name;
-    document.title = `${name} — Vexora Studio`;
+    document.title = `${name} — Bloxio Studio`;
   }
 
   function serializeProject() {
@@ -167,7 +167,7 @@ export default class RotatorHazard {
       if (!quiet) log(`Saved "${saved.name}" on this device.`);
       return true;
     } catch (error) {
-      console.error('Unable to save Vexora Studio project.', error);
+      console.error('Unable to save Bloxio Studio project.', error);
       setAutosave('Save failed', true);
       log(`Could not save project. Browser storage may be full: ${error.message}`, 'error');
       return false;
@@ -763,7 +763,7 @@ export default class RotatorHazard {
       const remaining = readProjects().filter(project => project.id !== currentProject.id);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(remaining));
     } catch (error) {
-      console.error('Unable to delete Vexora Studio project.', error);
+      console.error('Unable to delete Bloxio Studio project.', error);
       log(`Could not delete the project: ${error.message}`, 'error');
       return;
     }
@@ -1251,7 +1251,7 @@ export default class RotatorHazard {
     $('#menuActionPublish').addEventListener('click', () => openModal('modalPublish'));
     $('#btnConfirmPublish').addEventListener('click', () => {
       closeModal('modalPublish');
-      log('Publishing is unavailable: this prototype has no Vexora account, build service, or publishing API.', 'warn');
+      log('Publishing is unavailable: this prototype has no Bloxio account, build service, or publishing API.', 'warn');
       window.alert('Publishing is not connected yet. Your project is saved locally on this device.');
     });
     $('#projectNameBadge').addEventListener('click', () => {
@@ -1498,7 +1498,7 @@ export default class RotatorHazard {
     try {
       buildScene();
     } catch (error) {
-      console.error('Vexora Studio renderer initialization failed.', error);
+      console.error('Bloxio Studio renderer initialization failed.', error);
       log(`3D viewport could not start: ${error.message}`, 'error');
       $('#viewportContainer').insertAdjacentHTML('beforeend',
         '<p style="position:absolute;inset:45% 20px auto;text-align:center;color:#ff9caa">WebGL is unavailable in this browser. Enable hardware acceleration or try a supported desktop browser.</p>');
@@ -1513,7 +1513,7 @@ export default class RotatorHazard {
     window.setInterval(() => {
       if (!playing) saveProject(true);
     }, 15000);
-    log('Vexora Studio ready. Projects autosave to this browser; publishing and account sync are not connected.');
+    log('Bloxio Studio ready. Projects autosave to this browser; publishing and account sync are not connected.');
   }
 
   init();

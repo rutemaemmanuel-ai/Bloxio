@@ -1,6 +1,6 @@
-# Vexora deployment and authentication
+# Bloxio deployment and authentication
 
-Vexora can run as a Cloudflare Worker with static assets and D1, Cloudflare's
+Bloxio can run as a Cloudflare Worker with static assets and D1, Cloudflare's
 managed SQLite database. User accounts and login sessions are stored in D1;
 passwords are derived using PBKDF2-SHA-256 (100,000 iterations, the maximum
 supported by the Workers Web Crypto runtime), and only hashes of session
@@ -41,7 +41,7 @@ migrations, and dependency files from being served as public website assets.
 ## Run on Render
 
 1. Create a PostgreSQL database in Render.
-2. In the Vexora Web Service settings, add `DATABASE_URL` using the database's
+2. In the Bloxio Web Service settings, add `DATABASE_URL` using the database's
    **internal** connection string. Keep credentials private; never commit them.
 3. Set the start command to `npm start` and deploy.
 

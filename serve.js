@@ -231,7 +231,7 @@ async function handleAuthRequest(req, res, reqPath) {
     if (error.statusCode) {
       return sendJson(res, error.statusCode, { error: error.message });
     }
-    console.error('Vexora account request failed.', error);
+    console.error('Bloxio account request failed.', error);
     return sendJson(res, 500, { error: 'Account service is temporarily unavailable. Please try again.' });
   }
 }
@@ -262,7 +262,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   // -------------------------------------------------------------
-  // REST API: Vexora Studio Endpoints
+  // REST API: Bloxio Studio Endpoints
   // -------------------------------------------------------------
   if (reqPath.startsWith('/api/studio/')) {
     const publicPublishedEndpoint = req.method === 'GET' &&
@@ -275,11 +275,11 @@ const server = http.createServer(async (req, res) => {
       try {
         studioUser = await authStore.findUserBySession(readCookie(req, AUTH_COOKIE));
       } catch (error) {
-        console.error('Unable to verify the Vexora Studio session.', error);
+        console.error('Unable to verify the Bloxio Studio session.', error);
         return sendJson(res, 503, { success: false, error: 'Account service is temporarily unavailable.' });
       }
       if (!studioUser) {
-        return sendJson(res, 401, { success: false, error: 'Please sign in to use Vexora Studio.' });
+        return sendJson(res, 401, { success: false, error: 'Please sign in to use Bloxio Studio.' });
       }
     }
 
@@ -419,13 +419,13 @@ const server = http.createServer(async (req, res) => {
           slug: gameId,
           name: publishPayload.title,
           category: publishPayload.category || 'Adventure',
-          description: publishPayload.description || 'A 3D world created with Vexora Studio.',
+          description: publishPayload.description || 'A 3D world created with Bloxio Studio.',
           author: studioUser.username,
           authorAvatar: publishPayload.authorAvatar || '👨🏻‍🚀',
           image: publishPayload.thumbnail || 'assets/hero-world.jpg',
           publishedAt: Date.now(),
           version: publishPayload.version || '1.0.0',
-          tags: publishPayload.tags || ['3D', 'Vexora Studio'],
+          tags: publishPayload.tags || ['3D', 'Bloxio Studio'],
           scene: publishPayload.scene,
           scripts: publishPayload.scripts || [],
           settings: publishPayload.settings || {},
@@ -525,7 +525,7 @@ const server = http.createServer(async (req, res) => {
         return;
       }
     } catch (error) {
-      console.error('Unable to check the Vexora sign-in session.', error);
+      console.error('Unable to check the Bloxio sign-in session.', error);
     }
   }
 
@@ -595,12 +595,12 @@ async function startServer() {
     await authStore.initialize();
     const sessionCleanupTimer = setInterval(() => {
       authStore.deleteExpiredSessions().catch(error => {
-        console.error('Unable to clean up expired Vexora sessions.', error);
+        console.error('Unable to clean up expired Bloxio sessions.', error);
       });
     }, 6 * 60 * 60 * 1000);
     sessionCleanupTimer.unref();
   } else if (process.env.NODE_ENV === 'production') {
-    throw new Error('DATABASE_URL must be configured before starting Vexora in production.');
+    throw new Error('DATABASE_URL must be configured before starting Bloxio in production.');
   } else {
     console.warn('DATABASE_URL is not set. Account creation and sign-in are unavailable.');
   }
@@ -618,12 +618,12 @@ async function startServer() {
     server.once('listening', onListening);
     server.listen(PORT);
   });
-  console.log(`Vexora Server & Studio Backend running on port ${PORT}`);
+  console.log(`Bloxio Server & Studio Backend running on port ${PORT}`);
 }
 
 if (require.main === module) {
   startServer().catch(async error => {
-    console.error('Unable to start the Vexora server.', error);
+    console.error('Unable to start the Bloxio server.', error);
     await authStore.close();
     process.exitCode = 1;
   });
