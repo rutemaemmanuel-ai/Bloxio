@@ -28,7 +28,7 @@ migrations, and dependency files from being served as public website assets.
 
 ## Run on Replit
 
-1. Import `rutemaemmanuel-ai/Vexora.site` from GitHub at
+1. Import `rutemaemmanuel-ai/Bloxio` from GitHub at
    [replit.com/import](https://replit.com/import).
 2. In the Replit workspace, open the **Database** tool and provision/enable a
    PostgreSQL database for the app.
