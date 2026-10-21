@@ -3,6 +3,16 @@
   "name": "vexora-site",
   "main": "cloudflare-worker.js",
   "compatibility_date": "2026-10-20",
+  // Keeps the site reachable at vexora-site.<subdomain>.workers.dev.
+  // Without this, adding a route disables the workers.dev URL on deploy.
+  "workers_dev": true,
+  // Enable these only once vexora.site is an active zone in this Cloudflare
+  // account (i.e. after the nameservers at the registrar point to Cloudflare).
+  // Deploying with them before that fails with: "Can't infer zone from route".
+  // "routes": [
+  //   { "pattern": "vexora.site", "custom_domain": true },
+  //   { "pattern": "www.vexora.site", "custom_domain": true }
+  // ],
   "assets": {
     "directory": ".",
     "binding": "ASSETS",
