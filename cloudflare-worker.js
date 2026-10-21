@@ -296,19 +296,11 @@ export default {
     }
 
     const isHtml = url.pathname === '/' || url.pathname.endsWith('.html');
-    if (isHtml && url.pathname !== '/auth.html') {
-      try {
-        if (!await currentUser(request, env.DB)) {
-          return Response.redirect(new URL('/auth.html', request.url), 302);
-        }
-      } catch (error) {
-        console.error('Unable to verify a Vexora page session.', error);
-        return new Response('Account service is temporarily unavailable.', {
-          status: 503,
-          headers: { 'Cache-Control': 'no-store' }
-        });
-      }
-    } else if (url.pathname === '/auth.html') {
+
+    // Sign-in is not required: every page is public. The auth endpoints and
+    // /auth.html still work, so sessions can be re-enabled later without
+    // rewriting the worker.
+    if (url.pathname === '/auth.html') {
       try {
         if (await currentUser(request, env.DB)) {
           return Response.redirect(new URL('/', request.url), 302);
@@ -318,7 +310,13 @@ export default {
       }
     }
 
-    const response = await env.ASSETS.fetch(request);
+    // html_handling is "none", so the asset layer never maps a bare "/" onto
+    // index.html. Rewrite it here, otherwise the landing page 404s.
+    const assetRequest = url.pathname === '/'
+      ? new Request(new URL('/index.html', request.url).toString(), request)
+      : request;
+
+    const response = await env.ASSETS.fetch(assetRequest);
     const headers = new Headers(response.headers);
     headers.set('X-Content-Type-Options', 'nosniff');
     headers.set('X-Frame-Options', 'DENY');

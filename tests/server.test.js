@@ -20,12 +20,20 @@ test.after(async () => {
   });
 });
 
-test('redirects protected pages to sign-in when there is no session', async () => {
-  for (const page of ['/', '/index.html', '/games.html']) {
+test('serves every page without requiring a session', async () => {
+  const pages = [
+    '/', '/index.html', '/games.html', '/community.html', '/store.html',
+    '/studio.html', '/profile.html', '/inventory.html', '/settings.html',
+    '/friends.html', '/auth.html'
+  ];
+
+  for (const page of pages) {
     const response = await fetch(`${baseUrl}${page}`, { redirect: 'manual' });
-    assert.equal(response.status, 302);
-    assert.equal(response.headers.get('location'), '/auth.html');
+    assert.equal(response.status, 200, page);
   }
+
+  const landing = await (await fetch(`${baseUrl}/`)).text();
+  assert.match(landing, /Vexora/);
 });
 
 test('keeps the sign-in page public and explains missing database configuration', async () => {

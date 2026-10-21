@@ -62,10 +62,8 @@ if (accountIdentity && signOutButton) {
     .then(async response => {
       if (!response.ok) throw new Error('Unable to load your account details.');
       const result = await response.json();
-      if (!result.authenticated) {
-        window.location.replace('/auth.html');
-        return;
-      }
+      // Sign-in is not required, so a signed-out visitor simply stays put.
+      if (!result.authenticated) return;
       accountIdentity.textContent = `${result.user.username} · ${result.user.email}`;
       accountIdentity.hidden = false;
     })
