@@ -1,17 +1,17 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "vexora-site",
+  "name": "bloxio",
   "main": "cloudflare-worker.js",
   "compatibility_date": "2026-10-20",
-  // Keeps the site reachable at vexora-site.<subdomain>.workers.dev.
+  // Keeps the site reachable at bloxio.<subdomain>.workers.dev.
   // Without this, adding a route disables the workers.dev URL on deploy.
   "workers_dev": true,
-  // Enable these only once vexora.site is an active zone in this Cloudflare
+  // Enable these only once bloxio.site is an active zone in this Cloudflare
   // account (i.e. after the nameservers at the registrar point to Cloudflare).
   // Deploying with them before that fails with: "Can't infer zone from route".
   // "routes": [
-  //   { "pattern": "vexora.site", "custom_domain": true },
-  //   { "pattern": "www.vexora.site", "custom_domain": true }
+  //   { "pattern": "bloxio.site", "custom_domain": true },
+  //   { "pattern": "www.bloxio.site", "custom_domain": true }
   // ],
   "assets": {
     "directory": ".",
@@ -23,8 +23,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "vexora-auth",
-      "database_id": "fea8eb45-6a9b-4f3a-8678-ac4358aa753e",
+      "database_name": "bloxio-auth",
+      "database_id": "268742fb-fd92-42d2-af7c-fba3292ee04c",
       "migrations_dir": "migrations"
     }
   ]

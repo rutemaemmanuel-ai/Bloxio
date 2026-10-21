@@ -8,7 +8,7 @@ test('normalizes email addresses for account matching', () => {
 
 test('validates account details before registration', () => {
   const valid = {
-    username: 'Vexora_User',
+    username: 'Bloxio_User',
     email: 'player@example.com',
     password: 'a-long-and-safe-password'
   };

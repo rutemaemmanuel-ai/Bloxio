@@ -8,8 +8,8 @@ import { compileStudioScripts, createStudioScriptSandbox } from './src/engine/sc
 (() => {
   const $ = selector => document.querySelector(selector);
   const canvas = $('#viewportCanvas');
-  const STORAGE_KEY = 'vexora-studio-projects-v1';
-  const ACTIVE_KEY = 'vexora-studio-active-project';
+  const STORAGE_KEY = 'bloxio-studio-projects-v1';
+  const ACTIVE_KEY = 'bloxio-studio-active-project';
   const templates = [
     { id: 'obby', name: '3D Obstacle Course', description: 'A player, platforms, and a goal portal.' },
     { id: 'platformer', name: '3D Platformer', description: 'A starter platform level with a player and checkpoints.' },
@@ -776,7 +776,7 @@ export default class RotatorHazard {
     const blob = new Blob([JSON.stringify(serializeProject(), null, 2)], { type: 'application/json' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `${currentProject.name.replace(/[^a-z0-9-_]+/gi, '-').toLowerCase() || 'vexora-project'}.json`;
+    link.download = `${currentProject.name.replace(/[^a-z0-9-_]+/gi, '-').toLowerCase() || 'bloxio-project'}.json`;
     link.click();
     URL.revokeObjectURL(link.href);
     log('Project JSON exported.');
@@ -1235,7 +1235,7 @@ export default class RotatorHazard {
     });
     $('#menuActionTakeScreenshot').addEventListener('click', () => {
       const link = document.createElement('a');
-      link.download = 'vexora-studio-scene.png';
+      link.download = 'bloxio-studio-scene.png';
       link.href = renderer.domElement.toDataURL('image/png');
       link.click();
     });

@@ -393,7 +393,7 @@
   }
 
   function storeKey(id) {
-    return `vexora-game-progress-${id}`;
+    return `bloxio-game-progress-${id}`;
   }
 
   function readProgress(id) {
@@ -436,7 +436,7 @@
       console.error(`Unable to save ${GAME_NAMES[currentId]} progress.`, error);
       statusLabel.textContent = 'Progress could not be saved';
     }
-    window.dispatchEvent(new CustomEvent('vexora:game-progress', { detail: { gameId: currentId, progress } }));
+    window.dispatchEvent(new CustomEvent('bloxio:game-progress', { detail: { gameId: currentId, progress } }));
   }
 
   function formatTime(seconds) {
@@ -903,7 +903,7 @@
     setObjective(`Stage ${state.level + 1} cleared · ${formatTime(Math.floor(state.elapsed))}`);
     progressBar.style.width = '100%';
     playTone(760, 0.24);
-    window.dispatchEvent(new CustomEvent('vexora:game-finished', {
+    window.dispatchEvent(new CustomEvent('bloxio:game-finished', {
       detail: { gameId: currentId, score: Math.floor(state.score) }
     }));
     const nextLevel = state.level < 4;
@@ -1244,7 +1244,7 @@
       setStatus('Graphics could not be restored · reload this page to try again');
     }
   });
-  window.addEventListener('vexora:launch-game', event => {
+  window.addEventListener('bloxio:launch-game', event => {
     const id = event.detail?.gameId;
     if (!GAME_NAMES[id]) return;
     cancelAnimationFrame(animationFrame);

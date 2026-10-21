@@ -1,5 +1,5 @@
 {
-  "name": "vexora-site",
+  "name": "bloxio",
   "version": "1.0.0",
   "private": true,
   "description": "Bloxio games and creator community website",
@@ -10,9 +10,9 @@
     "start": "node serve.js",
     "test": "node --test",
     "cf:dev": "wrangler dev",
-    "cf:db:create": "wrangler d1 create vexora-auth",
-    "cf:db:migrate:local": "wrangler d1 migrations apply vexora-auth --local",
-    "cf:db:migrate:remote": "wrangler d1 migrations apply vexora-auth --remote",
+    "cf:db:create": "wrangler d1 create bloxio-auth",
+    "cf:db:migrate:local": "wrangler d1 migrations apply bloxio-auth --local",
+    "cf:db:migrate:remote": "wrangler d1 migrations apply bloxio-auth --remote",
     "cf:deploy": "wrangler deploy"
   },
   "dependencies": {

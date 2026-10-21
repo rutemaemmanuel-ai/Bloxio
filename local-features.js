@@ -25,7 +25,7 @@
         return true;
       } catch (error) {
         console.error(`Unable to save local Bloxio data (${key}).`, error);
-        window.dispatchEvent(new CustomEvent('vexora:local-save-error', { detail: { key } }));
+        window.dispatchEvent(new CustomEvent('bloxio:local-save-error', { detail: { key } }));
         return false;
       }
     }
@@ -35,8 +35,8 @@
     item && typeof item.id === 'string' && catalog[item.id] && Number.isFinite(item.playedAt));
   const validPlayers = value => Array.isArray(value) && value.every(player =>
     player && typeof player.name === 'string' && typeof player.avatar === 'string' && typeof player.color === 'string');
-  let history = storage.read('vexora-play-history', [], validHistory).slice(0, 12);
-  let favorites = storage.read('vexora-favorites', [], isStringArray);
+  let history = storage.read('bloxio-play-history', [], validHistory).slice(0, 12);
+  let favorites = storage.read('bloxio-favorites', [], isStringArray);
 
   function makeGameCard(id) {
     const game = catalog[id];
@@ -140,28 +140,28 @@
     }));
   }
 
-  window.addEventListener('vexora:launch-game', event => {
+  window.addEventListener('bloxio:launch-game', event => {
     const id = event.detail?.gameId;
     if (!catalog[id]) return;
     history = [{ id, playedAt: Date.now() }, ...history.filter(item => item.id !== id)].slice(0, 12);
-    if (storage.write('vexora-play-history', history)) renderHistory();
+    if (storage.write('bloxio-play-history', history)) renderHistory();
   });
-  window.addEventListener('vexora:game-finished', event => {
+  window.addEventListener('bloxio:game-finished', event => {
     const id = event.detail?.gameId;
     if (!catalog[id]) return;
     const record = history.find(item => item.id === id);
     if (record) {
       record.score = event.detail.score;
       record.playedAt = Date.now();
-      storage.write('vexora-play-history', history);
+      storage.write('bloxio-play-history', history);
       renderHistory();
     }
   });
-  window.addEventListener('vexora:favorites-changed', () => {
-    favorites = storage.read('vexora-favorites', [], isStringArray);
+  window.addEventListener('bloxio:favorites-changed', () => {
+    favorites = storage.read('bloxio-favorites', [], isStringArray);
     renderRecommendations();
   });
-  window.addEventListener('vexora:local-save-error', event => {
+  window.addEventListener('bloxio:local-save-error', event => {
     const toast = document.getElementById('toast');
     if (toast) {
       toast.textContent = 'Could not save on this device. Check available browser storage.';
@@ -174,8 +174,8 @@
   const playersGrid = document.querySelector('.community-people-grid');
   if (playersGrid) {
     const search = document.getElementById('communityPlayerSearch');
-    const dismissed = storage.read('vexora-community-dismissed-requests', [], isStringArray);
-    let accepted = storage.read('vexora-community-accepted-players', [], validPlayers);
+    const dismissed = storage.read('bloxio-community-dismissed-requests', [], isStringArray);
+    let accepted = storage.read('bloxio-community-accepted-players', [], validPlayers);
 
     dismissed.forEach(name => {
       document.querySelectorAll('#community-requests .friend-row').forEach(row => {
@@ -213,7 +213,7 @@
       remove.textContent = 'Remove friend';
       remove.addEventListener('click', () => {
         accepted.splice(accepted.findIndex(item => item.name === player.name), 1);
-        if (storage.write('vexora-community-accepted-players', accepted)) {
+        if (storage.write('bloxio-community-accepted-players', accepted)) {
           card.remove();
           search?.dispatchEvent(new Event('input'));
         }
@@ -223,7 +223,7 @@
       playersGrid.append(card);
     }
     accepted.forEach(renderAcceptedPlayer);
-    window.addEventListener('vexora:friend-accepted', event => {
+    window.addEventListener('bloxio:friend-accepted', event => {
       const player = event.detail;
       if (!validPlayers([player])) return;
       accepted = [...accepted.filter(item => item.name !== player.name), player];
@@ -244,7 +244,7 @@
     const empty = document.getElementById('localPartyEmpty');
     const activitySelect = document.getElementById('partyActivity');
     const playersSelect = document.getElementById('partyPlayers');
-    let parties = storage.read('vexora-local-parties', [], value => Array.isArray(value) && value.every(party =>
+    let parties = storage.read('bloxio-local-parties', [], value => Array.isArray(value) && value.every(party =>
       party && typeof party.id === 'string' && typeof party.activity === 'string' && isStringArray(party.players)));
 
     function renderParties() {
@@ -263,7 +263,7 @@
         remove.textContent = 'Remove preview';
         remove.addEventListener('click', () => {
           parties = parties.filter(item => item.id !== party.id);
-          if (storage.write('vexora-local-parties', parties)) renderParties();
+          if (storage.write('bloxio-local-parties', parties)) renderParties();
         });
         card.append(title, invitees, note, remove);
         return card;
@@ -276,7 +276,7 @@
       const players = [...playersSelect.selectedOptions].map(option => option.value);
       const activity = activitySelect?.value || 'Casual hangout';
       parties = [{ id: `${Date.now()}`, activity, players, createdAt: Date.now() }, ...parties].slice(0, 10);
-      if (storage.write('vexora-local-parties', parties)) {
+      if (storage.write('bloxio-local-parties', parties)) {
         renderParties();
         showToast('Local hangout preview created. No invitations were sent.');
       }
@@ -287,7 +287,7 @@
   const feedForm = document.getElementById('localFeedForm');
   if (feedForm) {
     const feed = document.querySelector('#community-feed .community-feed');
-    let posts = storage.read('vexora-local-feed', [], value => Array.isArray(value) && value.every(post =>
+    let posts = storage.read('bloxio-local-feed', [], value => Array.isArray(value) && value.every(post =>
       post && typeof post.id === 'string' && typeof post.text === 'string' && Number.isFinite(post.likes) && typeof post.liked === 'boolean'));
 
     function renderPosts() {
@@ -308,7 +308,7 @@
         like.addEventListener('click', () => {
           post.liked = !post.liked;
           post.likes = Math.max(0, post.likes + (post.liked ? 1 : -1));
-          if (storage.write('vexora-local-feed', posts)) renderPosts();
+          if (storage.write('bloxio-local-feed', posts)) renderPosts();
         });
         const remove = document.createElement('button');
         remove.className = 'secondary-button small';
@@ -316,7 +316,7 @@
         remove.textContent = 'Delete';
         remove.addEventListener('click', () => {
           posts = posts.filter(item => item.id !== post.id);
-          if (storage.write('vexora-local-feed', posts)) renderPosts();
+          if (storage.write('bloxio-local-feed', posts)) renderPosts();
         });
         card.append(label, body, like, remove);
         feed.prepend(card);
@@ -329,7 +329,7 @@
       const text = input.value.trim();
       if (!text) return;
       posts = [{ id: `${Date.now()}`, text, likes: 0, liked: false }, ...posts].slice(0, 20);
-      if (storage.write('vexora-local-feed', posts)) {
+      if (storage.write('bloxio-local-feed', posts)) {
         input.value = '';
         renderPosts();
         showToast('Update saved to your local community feed.');

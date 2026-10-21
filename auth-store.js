@@ -6,7 +6,7 @@ const scrypt = promisify(scryptCallback);
 const SESSION_LIFETIME_MS = 30 * 24 * 60 * 60 * 1000;
 const PASSWORD_BYTES = 64;
 const PASSWORD_OPTIONS = { N: 16384, r: 8, p: 1, maxmem: 64 * 1024 * 1024 };
-const DUMMY_SALT = 'vexora-invalid-account';
+const DUMMY_SALT = 'bloxio-invalid-account';
 const DUMMY_HASH = Buffer.alloc(PASSWORD_BYTES, 0x5a);
 
 const pool = process.env.DATABASE_URL
@@ -68,7 +68,7 @@ async function initialize() {
   }
 
   await pool.query(`
-    CREATE TABLE IF NOT EXISTS vexora_users (
+    CREATE TABLE IF NOT EXISTS bloxio_users (
       id UUID PRIMARY KEY,
       username VARCHAR(24) NOT NULL UNIQUE,
       email VARCHAR(254) NOT NULL UNIQUE,
@@ -77,14 +77,14 @@ async function initialize() {
     )
   `);
   await pool.query(`
-    CREATE TABLE IF NOT EXISTS vexora_sessions (
+    CREATE TABLE IF NOT EXISTS bloxio_sessions (
       token_hash CHAR(64) PRIMARY KEY,
-      user_id UUID NOT NULL REFERENCES vexora_users(id) ON DELETE CASCADE,
+      user_id UUID NOT NULL REFERENCES bloxio_users(id) ON DELETE CASCADE,
       expires_at TIMESTAMPTZ NOT NULL,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
   `);
-  await pool.query('CREATE INDEX IF NOT EXISTS vexora_sessions_expires_at_idx ON vexora_sessions(expires_at)');
+  await pool.query('CREATE INDEX IF NOT EXISTS bloxio_sessions_expires_at_idx ON bloxio_sessions(expires_at)');
   return true;
 }
 
@@ -92,7 +92,7 @@ async function createSession(client, userId) {
   const token = randomBytes(32).toString('base64url');
   const expiresAt = new Date(Date.now() + SESSION_LIFETIME_MS);
   await client.query(
-    'INSERT INTO vexora_sessions (token_hash, user_id, expires_at) VALUES ($1, $2, $3)',
+    'INSERT INTO bloxio_sessions (token_hash, user_id, expires_at) VALUES ($1, $2, $3)',
     [hashSessionToken(token), userId, expiresAt]
   );
   return { token, expiresAt };
@@ -103,11 +103,11 @@ async function createAccount({ username, email, password }) {
   try {
     await client.query('BEGIN');
     const userResult = await client.query(
-      'INSERT INTO vexora_users (id, username, email, password_hash) VALUES ($1, $2, $3, $4) RETURNING id, username, email, created_at',
+      'INSERT INTO bloxio_users (id, username, email, password_hash) VALUES ($1, $2, $3, $4) RETURNING id, username, email, created_at',
       [randomUUID(), username.trim().toLowerCase(), normalizeEmail(email), await hashPassword(password)]
     );
     const session = await createSession(client, userResult.rows[0].id);
-    await client.query('DELETE FROM vexora_sessions WHERE expires_at <= NOW()');
+    await client.query('DELETE FROM bloxio_sessions WHERE expires_at <= NOW()');
     await client.query('COMMIT');
     return { user: publicUser(userResult.rows[0]), ...session };
   } catch (error) {
@@ -120,7 +120,7 @@ async function createAccount({ username, email, password }) {
 
 async function findUserByEmail(email) {
   const result = await pool.query(
-    'SELECT id, username, email, password_hash, created_at FROM vexora_users WHERE email = $1',
+    'SELECT id, username, email, password_hash, created_at FROM bloxio_users WHERE email = $1',
     [normalizeEmail(email)]
   );
   return result.rows[0] || null;
@@ -131,7 +131,7 @@ async function createUserSession(user) {
   try {
     await client.query('BEGIN');
     const session = await createSession(client, user.id);
-    await client.query('DELETE FROM vexora_sessions WHERE expires_at <= NOW()');
+    await client.query('DELETE FROM bloxio_sessions WHERE expires_at <= NOW()');
     await client.query('COMMIT');
     return { user: publicUser(user), ...session };
   } catch (error) {
@@ -148,8 +148,8 @@ async function findUserBySession(token) {
   }
   const result = await pool.query(
     `SELECT u.id, u.username, u.email, u.created_at
-     FROM vexora_sessions s
-     JOIN vexora_users u ON u.id = s.user_id
+     FROM bloxio_sessions s
+     JOIN bloxio_users u ON u.id = s.user_id
      WHERE s.token_hash = $1 AND s.expires_at > NOW()`,
     [hashSessionToken(token)]
   );
@@ -160,11 +160,11 @@ async function deleteSession(token) {
   if (!pool || typeof token !== 'string' || !/^[A-Za-z0-9_-]{43}$/.test(token)) {
     return;
   }
-  await pool.query('DELETE FROM vexora_sessions WHERE token_hash = $1', [hashSessionToken(token)]);
+  await pool.query('DELETE FROM bloxio_sessions WHERE token_hash = $1', [hashSessionToken(token)]);
 }
 
 function deleteExpiredSessions() {
-  return pool.query('DELETE FROM vexora_sessions WHERE expires_at <= NOW()');
+  return pool.query('DELETE FROM bloxio_sessions WHERE expires_at <= NOW()');
 }
 
 function close() {

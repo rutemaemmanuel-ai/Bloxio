@@ -53,7 +53,7 @@ let toastTimer;
 
 if (headerAvatar) {
   const avatarLabel = headerAvatar.querySelector('.avatar-label');
-  if (avatarLabel) avatarLabel.textContent = localStorage.getItem('vexora-avatar') || '👨🏻‍🚀';
+  if (avatarLabel) avatarLabel.textContent = localStorage.getItem('bloxio-avatar') || '👨🏻‍🚀';
 }
 
 function showToast(message) {
@@ -140,7 +140,7 @@ if (accountMenu) {
 }
 
 function readFavoriteGames() {
-  const storedFavorites = localStorage.getItem('vexora-favorites');
+  const storedFavorites = localStorage.getItem('bloxio-favorites');
   if (!storedFavorites) return new Set();
   try {
     const favorites = JSON.parse(storedFavorites);
@@ -254,7 +254,7 @@ if (gameDetail) {
     image.src = game.image;
     image.alt = game.alt;
     document.getElementById('launchGame').addEventListener('click', () => {
-      window.dispatchEvent(new CustomEvent('vexora:launch-game', { detail: { gameId: slug } }));
+      window.dispatchEvent(new CustomEvent('bloxio:launch-game', { detail: { gameId: slug } }));
     });
   } else {
     gameDetail.hidden = true;
@@ -384,17 +384,17 @@ document.querySelectorAll('.favorite').forEach(button => {
     const isSaved = button.classList.contains('saved');
     if (isSaved) favoriteGames.add(gameId);
     else favoriteGames.delete(gameId);
-    localStorage.setItem('vexora-favorites', JSON.stringify([...favoriteGames]));
+    localStorage.setItem('bloxio-favorites', JSON.stringify([...favoriteGames]));
     button.textContent = isSaved ? '♥' : '♡';
     button.setAttribute('aria-pressed', String(isSaved));
     button.setAttribute('aria-label', `${isSaved ? 'Remove' : 'Add'} ${gameName} ${isSaved ? 'from' : 'to'} favorites`);
-    window.dispatchEvent(new CustomEvent('vexora:favorites-changed'));
+    window.dispatchEvent(new CustomEvent('bloxio:favorites-changed'));
     showToast(isSaved ? 'Added to your favorites!' : 'Removed from your favorites.');
   });
 });
 
 let followingNames = [];
-const followingStorage = localStorage.getItem('vexora-following');
+const followingStorage = localStorage.getItem('bloxio-following');
 if (followingStorage !== null) {
   try {
     followingNames = JSON.parse(followingStorage);
@@ -428,7 +428,7 @@ document.querySelectorAll('.follow-button').forEach(button => {
       followingNames = isFollowing
         ? [...new Set([...followingNames, label])]
         : followingNames.filter(name => name !== label);
-      localStorage.setItem('vexora-following', JSON.stringify(followingNames));
+      localStorage.setItem('bloxio-following', JSON.stringify(followingNames));
       document.querySelectorAll('#community-followers .friend-row .follow-button, #community-following .friend-row .follow-button').forEach(item => {
         const itemName = item.closest('.friend-row')?.querySelector('.friend-meta strong')?.textContent;
         if (itemName !== label) return;
@@ -453,17 +453,17 @@ document.querySelectorAll('[data-request]').forEach(button => {
     const action = button.dataset.request;
     const user = request.querySelector('.friend-meta strong').textContent;
     if (request.closest('#community-requests')) {
-      const dismissed = readCommunityArray('vexora-community-dismissed-requests').filter(name => typeof name === 'string');
+      const dismissed = readCommunityArray('bloxio-community-dismissed-requests').filter(name => typeof name === 'string');
       if (!dismissed.includes(user)) dismissed.push(user);
-      saveCommunityArray('vexora-community-dismissed-requests', dismissed);
+      saveCommunityArray('bloxio-community-dismissed-requests', dismissed);
       if (action === 'accept') {
-        const accepted = readCommunityArray('vexora-community-accepted-players')
+        const accepted = readCommunityArray('bloxio-community-accepted-players')
           .filter(player => player && typeof player.name === 'string' && typeof player.avatar === 'string' && typeof player.color === 'string');
         if (!accepted.some(player => player.name === user)) {
           const player = { name: user, avatar: user[0], color: user === 'KaiBuilds' ? 'gold' : 'rose' };
           accepted.push(player);
-          if (saveCommunityArray('vexora-community-accepted-players', accepted)) {
-            window.dispatchEvent(new CustomEvent('vexora:friend-accepted', { detail: player }));
+          if (saveCommunityArray('bloxio-community-accepted-players', accepted)) {
+            window.dispatchEvent(new CustomEvent('bloxio:friend-accepted', { detail: player }));
           }
         }
       }
@@ -505,7 +505,7 @@ if (friendsWorkspace) {
   const chatForm = document.getElementById('chatForm');
   const chatBack = document.getElementById('chatBack');
   let activeChat = 'LunaRay';
-  const canReceiveLocalMessages = localStorage.getItem('vexora-setting-directMessages') !== 'false';
+  const canReceiveLocalMessages = localStorage.getItem('bloxio-setting-directMessages') !== 'false';
   if (chatInput && chatForm) {
     chatInput.disabled = !canReceiveLocalMessages;
     chatForm.querySelector('button[type="submit"]').disabled = !canReceiveLocalMessages;
@@ -525,7 +525,7 @@ if (friendsWorkspace) {
       ['received', 'NovaSpawn · 9:16 AM', 'Shared a cool build with you.']
     ]
   };
-  const savedConversations = localStorage.getItem('vexora-demo-conversations');
+  const savedConversations = localStorage.getItem('bloxio-demo-conversations');
   if (savedConversations) {
     try {
       const parsedConversations = JSON.parse(savedConversations);
@@ -637,7 +637,7 @@ if (friendsWorkspace) {
       const timestamp = new Intl.DateTimeFormat([], { hour: 'numeric', minute: '2-digit' }).format(new Date());
       const message = ['sent', `You · ${timestamp}`, text];
       conversations[activeChat] = [...(conversations[activeChat] || []), message];
-      localStorage.setItem('vexora-demo-conversations', JSON.stringify(conversations));
+      localStorage.setItem('bloxio-demo-conversations', JSON.stringify(conversations));
       const bubble = document.createElement('div');
       bubble.className = 'chat-bubble sent';
       const meta = document.createElement('small');
@@ -698,9 +698,9 @@ if (avatarPreview) {
   const editForm = document.getElementById('profileEditForm');
   const nameInput = document.getElementById('profileNameInput');
   const bioInput = document.getElementById('profileBioInput');
-  const savedName = localStorage.getItem('vexora-profile-name');
-  const savedBio = localStorage.getItem('vexora-profile-bio');
-  const savedAvatar = localStorage.getItem('vexora-avatar') || '👨🏻‍🚀';
+  const savedName = localStorage.getItem('bloxio-profile-name');
+  const savedBio = localStorage.getItem('bloxio-profile-bio');
+  const savedAvatar = localStorage.getItem('bloxio-avatar') || '👨🏻‍🚀';
   avatarPreview.textContent = savedAvatar;
   if (savedName && displayName) displayName.textContent = savedName;
   if (savedBio && bio) bio.textContent = savedBio;
@@ -744,8 +744,8 @@ if (avatarPreview) {
         nameInput.focus();
         return;
       }
-      localStorage.setItem('vexora-profile-name', name);
-      localStorage.setItem('vexora-profile-bio', bioInput.value.trim());
+      localStorage.setItem('bloxio-profile-name', name);
+      localStorage.setItem('bloxio-profile-bio', bioInput.value.trim());
       displayName.textContent = name;
       bio.textContent = bioInput.value.trim() || 'Add a short introduction about yourself.';
       editForm.hidden = true;
@@ -812,7 +812,7 @@ if (avatarPreview) {
       choice.addEventListener('click', () => setAvatarPreview(choice.dataset.avatar));
     });
     document.getElementById('saveAvatar')?.addEventListener('click', () => {
-      localStorage.setItem('vexora-avatar', avatarPreview.textContent);
+      localStorage.setItem('bloxio-avatar', avatarPreview.textContent);
       const avatarLabel = document.querySelector('.account-menu .avatar-label');
       if (avatarLabel) avatarLabel.textContent = avatarPreview.textContent;
       if (equippedLabel) equippedLabel.textContent = `Equipped avatar: ${avatarPreview.textContent}`;
@@ -855,7 +855,7 @@ if (avatarPreview) {
 }
 
 document.querySelectorAll('[data-setting]').forEach(setting => {
-  const key = `vexora-setting-${setting.dataset.setting}`;
+  const key = `bloxio-setting-${setting.dataset.setting}`;
   const savedValue = localStorage.getItem(key);
   if (savedValue !== null) setting.checked = savedValue === 'true';
   if (setting.dataset.setting === 'reducedMotion' && setting.checked) {
@@ -899,7 +899,7 @@ if (inventoryGrid) {
   const inventoryItems = [...inventoryGrid.querySelectorAll('.inventory-item')];
   let equippedItems = [];
   try {
-    equippedItems = JSON.parse(localStorage.getItem('vexora-equipped-items') || '[]');
+    equippedItems = JSON.parse(localStorage.getItem('bloxio-equipped-items') || '[]');
     if (!Array.isArray(equippedItems) || !equippedItems.every(item => typeof item === 'string')) throw new TypeError('Equipped item data is invalid.');
   } catch (error) {
     console.error('Unable to read equipped inventory items.', error);
@@ -938,7 +938,7 @@ if (inventoryGrid) {
         equippedItems = equippedItems.includes(item.dataset.itemId)
           ? equippedItems.filter(id => id !== item.dataset.itemId)
           : [...equippedItems, item.dataset.itemId];
-        localStorage.setItem('vexora-equipped-items', JSON.stringify(equippedItems));
+        localStorage.setItem('bloxio-equipped-items', JSON.stringify(equippedItems));
         renderEquipState();
         showToast(`${itemName} ${equippedItems.includes(item.dataset.itemId) ? 'equipped' : 'unequipped'} on this device.`);
       });
@@ -1111,7 +1111,7 @@ if (heroCarousel) {
   let pointerPausedHero = false;
   let focusPausedHero = false;
 
-  if (localStorage.getItem('vexora-setting-reducedMotion') === 'true') {
+  if (localStorage.getItem('bloxio-setting-reducedMotion') === 'true') {
     document.documentElement.classList.add('reduced-motion');
   }
 

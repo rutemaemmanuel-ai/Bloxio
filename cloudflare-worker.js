@@ -1,4 +1,4 @@
-const COOKIE_NAME = 'vexora_session';
+const COOKIE_NAME = 'bloxio_session';
 const SESSION_DURATION_SECONDS = 60 * 60 * 24 * 30;
 const PASSWORD_ITERATIONS = 100000;
 const RATE_LIMIT = 20;
@@ -160,8 +160,8 @@ async function currentUser(request, db) {
   const tokenHash = await hashSessionToken(token);
   const row = await db.prepare(`
     SELECT u.id, u.username, u.email, u.created_at
-    FROM vexora_sessions s
-    JOIN vexora_users u ON u.id = s.user_id
+    FROM bloxio_sessions s
+    JOIN bloxio_users u ON u.id = s.user_id
     WHERE s.token_hash = ? AND s.expires_at > ?
   `).bind(tokenHash, Date.now()).first();
   return row ? publicUser(row) : null;
@@ -176,7 +176,7 @@ async function createSession(db, userId) {
   const tokenHash = await hashSessionToken(token);
   const expiresAt = Date.now() + SESSION_DURATION_SECONDS * 1000;
   await db.prepare(
-    'INSERT INTO vexora_sessions (token_hash, user_id, expires_at) VALUES (?, ?, ?)'
+    'INSERT INTO bloxio_sessions (token_hash, user_id, expires_at) VALUES (?, ?, ?)'
   ).bind(tokenHash, userId, expiresAt).run();
   return token;
 }
@@ -211,7 +211,7 @@ async function handleAuth(request, env, pathname) {
     const token = cookieToken(request);
     if (pathname === '/api/auth/logout') {
       if (/^[A-Za-z0-9_-]{43}$/.test(token)) {
-        await db.prepare('DELETE FROM vexora_sessions WHERE token_hash = ?')
+        await db.prepare('DELETE FROM bloxio_sessions WHERE token_hash = ?')
           .bind(await hashSessionToken(token)).run();
       }
       return jsonResponse({ success: true }, 200, {
@@ -241,10 +241,10 @@ async function handleAuth(request, env, pathname) {
       try {
         await db.batch([
           db.prepare(
-            'INSERT INTO vexora_users (id, username, email, password_salt, password_hash, created_at) VALUES (?, ?, ?, ?, ?, ?)'
+            'INSERT INTO bloxio_users (id, username, email, password_salt, password_hash, created_at) VALUES (?, ?, ?, ?, ?, ?)'
           ).bind(id, username, email, toHex(salt), hash, createdAt),
           db.prepare(
-            'INSERT INTO vexora_sessions (token_hash, user_id, expires_at) VALUES (?, ?, ?)'
+            'INSERT INTO bloxio_sessions (token_hash, user_id, expires_at) VALUES (?, ?, ?)'
           ).bind(tokenHash, id, expiresAt),
           db.prepare('DELETE FROM auth_attempts WHERE window_started_at < ?')
             .bind(createdAt - RATE_WINDOW_MS * 2)
@@ -267,7 +267,7 @@ async function handleAuth(request, env, pathname) {
     }
     const email = body.email.trim().toLowerCase();
     const user = await db.prepare(
-      'SELECT id, username, email, password_salt, password_hash, created_at FROM vexora_users WHERE email = ?'
+      'SELECT id, username, email, password_salt, password_hash, created_at FROM bloxio_users WHERE email = ?'
     ).bind(email).first();
     const salt = fromHex(user?.password_salt) || DUMMY_SALT;
     const expected = fromHex(user?.password_hash) || new Uint8Array(32);

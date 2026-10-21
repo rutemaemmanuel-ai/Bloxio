@@ -48,7 +48,7 @@ const MIME_TYPES = {
   '.ogg': 'audio/ogg',
   '.wasm': 'application/wasm'
 };
-const AUTH_COOKIE = 'vexora_session';
+const AUTH_COOKIE = 'bloxio_session';
 const AUTH_BODY_LIMIT = 8192;
 const AUTH_RATE_LIMIT = 20;
 const AUTH_RATE_WINDOW_MS = 15 * 60 * 1000;

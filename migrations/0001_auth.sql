@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS vexora_users (
+CREATE TABLE IF NOT EXISTS bloxio_users (
   id TEXT PRIMARY KEY,
   username TEXT NOT NULL COLLATE NOCASE UNIQUE,
   email TEXT NOT NULL COLLATE NOCASE UNIQUE,
@@ -7,14 +7,14 @@ CREATE TABLE IF NOT EXISTS vexora_users (
   created_at INTEGER NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS vexora_sessions (
+CREATE TABLE IF NOT EXISTS bloxio_sessions (
   token_hash TEXT PRIMARY KEY,
-  user_id TEXT NOT NULL REFERENCES vexora_users(id) ON DELETE CASCADE,
+  user_id TEXT NOT NULL REFERENCES bloxio_users(id) ON DELETE CASCADE,
   expires_at INTEGER NOT NULL
 );
 
-CREATE INDEX IF NOT EXISTS vexora_sessions_expires_at_idx
-  ON vexora_sessions(expires_at);
+CREATE INDEX IF NOT EXISTS bloxio_sessions_expires_at_idx
+  ON bloxio_sessions(expires_at);
 
 CREATE TABLE IF NOT EXISTS auth_attempts (
   address_hash TEXT PRIMARY KEY,
