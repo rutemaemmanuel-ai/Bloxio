@@ -18,6 +18,7 @@ if (sharedHeader) {
         <summary class="avatar" aria-label="Open account menu"><span class="avatar-label">👨🏻‍🚀</span></summary>
         <div class="account-dropdown" aria-label="Account menu">
           <p class="account-identity" id="accountIdentity" hidden></p>
+          <a href="auth.html" id="signInLink" hidden>Log in</a>
           <a href="profile.html">My Profile</a>
           <a href="store.html#coins">Wallet &amp; Transactions</a>
           <a href="settings.html">Account Settings</a>
@@ -42,6 +43,12 @@ const headerAvatar = document.querySelector('.avatar');
 const viewAll = document.getElementById('viewAll');
 const accountIdentity = document.getElementById('accountIdentity');
 const signOutButton = document.getElementById('signOutButton');
+const signInLink = document.getElementById('signInLink');
+
+// Account pages need an email session; public pages stay open.
+// Keep in sync with PROTECTED_PAGES in cloudflare-worker.js.
+const PROTECTED_PAGES = ['profile.html', 'inventory.html', 'settings.html', 'friends.html'];
+const currentPageName = () => window.location.pathname.split('/').pop().toLowerCase() || 'index.html';
 let toastTimer;
 
 if (headerAvatar) {
@@ -62,8 +69,15 @@ if (accountIdentity && signOutButton) {
     .then(async response => {
       if (!response.ok) throw new Error('Unable to load your account details.');
       const result = await response.json();
-      // Sign-in is not required, so a signed-out visitor simply stays put.
-      if (!result.authenticated) return;
+      if (!result.authenticated) {
+        if (PROTECTED_PAGES.includes(currentPageName())) {
+          window.location.replace('/auth.html');
+          return;
+        }
+        if (signInLink) signInLink.hidden = false;
+        if (signOutButton) signOutButton.hidden = true;
+        return;
+      }
       accountIdentity.textContent = `${result.user.username} · ${result.user.email}`;
       accountIdentity.hidden = false;
     })

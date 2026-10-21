@@ -6,6 +6,13 @@ const RATE_WINDOW_MS = 15 * 60 * 1000;
 const DUMMY_SALT = new Uint8Array(16);
 const encoder = new TextEncoder();
 
+const PROTECTED_PAGES = new Set([
+  '/profile.html',
+  '/inventory.html',
+  '/settings.html',
+  '/friends.html'
+]);
+
 function jsonResponse(body, status = 200, headers = {}) {
   const responseHeaders = new Headers(headers);
   responseHeaders.set('Content-Type', 'application/json; charset=utf-8');
@@ -297,10 +304,21 @@ export default {
 
     const isHtml = url.pathname === '/' || url.pathname.endsWith('.html');
 
-    // Sign-in is not required: every page is public. The auth endpoints and
-    // /auth.html still work, so sessions can be re-enabled later without
-    // rewriting the worker.
-    if (url.pathname === '/auth.html') {
+    // Pages that render account-scoped data require an email sign-in. Public
+    // pages stay open so visitors and crawlers can reach them.
+    if (isHtml && PROTECTED_PAGES.has(url.pathname)) {
+      try {
+        if (!await currentUser(request, env.DB)) {
+          return Response.redirect(new URL('/auth.html', request.url), 302);
+        }
+      } catch (error) {
+        console.error('Unable to verify a Bloxio page session.', error);
+        return new Response('Account service is temporarily unavailable.', {
+          status: 503,
+          headers: { 'Cache-Control': 'no-store' }
+        });
+      }
+    } else if (url.pathname === '/auth.html') {
       try {
         if (await currentUser(request, env.DB)) {
           return Response.redirect(new URL('/', request.url), 302);

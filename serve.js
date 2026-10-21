@@ -9,6 +9,14 @@ const PROJECTS_DIR = path.join(DATA_DIR, 'projects');
 const PUBLISHED_FILE = path.join(DATA_DIR, 'published-games.json');
 const UPLOADS_DIR = path.join(DATA_DIR, 'uploads');
 
+// Keep in sync with PROTECTED_PAGES in cloudflare-worker.js.
+const PROTECTED_PAGES = new Set([
+  '/profile.html',
+  '/inventory.html',
+  '/settings.html',
+  '/friends.html'
+]);
+
 // Ensure data directories exist
 for (const dir of [DATA_DIR, PROJECTS_DIR, UPLOADS_DIR]) {
   if (!fs.existsSync(dir)) {
@@ -514,9 +522,27 @@ const server = http.createServer(async (req, res) => {
   const pagePath = reqPath === '/' || reqPath === '' ? '/index.html' : reqPath;
   const isHtmlPage = path.extname(pagePath).toLowerCase() === '.html';
 
-  // Sign-in is not required: every page is public. /auth.html still works, so
-  // gating can be re-enabled later without rewriting the server.
-  if (pagePath === '/auth.html' && authStore.isConfigured) {
+  // Account pages require an email sign-in; public pages stay open.
+  if (isHtmlPage && PROTECTED_PAGES.has(pagePath)) {
+    if (!authStore.isConfigured) {
+      res.writeHead(302, { Location: '/auth.html', 'Cache-Control': 'no-store' });
+      res.end();
+      return;
+    }
+    try {
+      const user = await authStore.findUserBySession(readCookie(req, AUTH_COOKIE));
+      if (!user) {
+        res.writeHead(302, { Location: '/auth.html', 'Cache-Control': 'no-store' });
+        res.end();
+        return;
+      }
+    } catch (error) {
+      console.error('Unable to verify a Bloxio page session.', error);
+      res.writeHead(503, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' });
+      res.end('Account service is temporarily unavailable. Please try again.');
+      return;
+    }
+  } else if (pagePath === '/auth.html' && authStore.isConfigured) {
     try {
       const user = await authStore.findUserBySession(readCookie(req, AUTH_COOKIE));
       if (user) {

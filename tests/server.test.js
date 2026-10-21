@@ -20,11 +20,10 @@ test.after(async () => {
   });
 });
 
-test('serves every page without requiring a session', async () => {
+test('serves public pages without a session', async () => {
   const pages = [
     '/', '/index.html', '/games.html', '/community.html', '/store.html',
-    '/studio.html', '/profile.html', '/inventory.html', '/settings.html',
-    '/friends.html', '/auth.html'
+    '/studio.html', '/auth.html'
   ];
 
   for (const page of pages) {
@@ -34,6 +33,14 @@ test('serves every page without requiring a session', async () => {
 
   const landing = await (await fetch(`${baseUrl}/`)).text();
   assert.match(landing, /Bloxio/);
+});
+
+test('sends account pages to sign-in when there is no session', async () => {
+  for (const page of ['/profile.html', '/inventory.html', '/settings.html', '/friends.html']) {
+    const response = await fetch(`${baseUrl}${page}`, { redirect: 'manual' });
+    assert.equal(response.status, 302, page);
+    assert.equal(response.headers.get('location'), '/auth.html', page);
+  }
 });
 
 test('keeps the sign-in page public and explains missing database configuration', async () => {
