@@ -4,9 +4,9 @@ Play. Create. Explore.
 
 ## Live site
 
-**https://bloxio.rutemaemmanuel.workers.dev**
+**https://vexora-site.rutemaemmanuel.workers.dev**
 
-This is the canonical address. It is served by the Cloudflare Worker `bloxio`
+This is the canonical address. It is served by the Cloudflare Worker `vexora-site`
 and includes the working sign-in API (`/api/auth/*`).
 
 A static mirror is also published by GitHub Pages at

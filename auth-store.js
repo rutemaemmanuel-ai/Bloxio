@@ -17,10 +17,7 @@ function normalizeEmail(email) {
   return email.trim().toLowerCase();
 }
 
-function validateSignupInput({ username, email, password }) {
-  if (typeof username !== 'string' || !/^[a-zA-Z0-9_]{3,24}$/.test(username.trim())) {
-    return 'Choose a username with 3–24 letters, numbers, or underscores.';
-  }
+function validateSignupInput({ email, password }) {
   if (typeof email !== 'string' || email.length > 254 ||
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
     return 'Enter a valid email address.';
@@ -30,6 +27,24 @@ function validateSignupInput({ username, email, password }) {
     return 'Use a password that is at least 12 characters and no more than 128 bytes.';
   }
   return null;
+}
+
+function generateUsernameFromEmail(email) {
+  const localPart = String(email || '').trim().split('@')[0]?.toLowerCase() || 'player';
+  const sanitized = localPart.replace(/[^a-z0-9_]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 24);
+  const base = sanitized || 'player';
+  return base.length >= 3 ? base : `${base}${'x'.repeat(3 - base.length)}`;
+}
+
+async function generateUniqueUsername(email, client) {
+  const base = generateUsernameFromEmail(email);
+  let username = base;
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const result = await client.query('SELECT 1 FROM bloxio_users WHERE username = $1', [username]);
+    if (result.rowCount === 0) return username;
+    username = `${base.slice(0, 15)}_${randomBytes(4).toString('hex')}`;
+  }
+  throw new Error('Unable to generate a unique username for the account.');
 }
 
 function hashSessionToken(token) {
@@ -98,13 +113,14 @@ async function createSession(client, userId) {
   return { token, expiresAt };
 }
 
-async function createAccount({ username, email, password }) {
+async function createAccount({ email, password }) {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
+    const username = await generateUniqueUsername(email, client);
     const userResult = await client.query(
       'INSERT INTO bloxio_users (id, username, email, password_hash) VALUES ($1, $2, $3, $4) RETURNING id, username, email, created_at',
-      [randomUUID(), username.trim().toLowerCase(), normalizeEmail(email), await hashPassword(password)]
+      [randomUUID(), username, normalizeEmail(email), await hashPassword(password)]
     );
     const session = await createSession(client, userResult.rows[0].id);
     await client.query('DELETE FROM bloxio_sessions WHERE expires_at <= NOW()');
@@ -180,6 +196,7 @@ module.exports = {
   deleteSession,
   findUserByEmail,
   findUserBySession,
+  generateUsernameFromEmail,
   hashPassword,
   initialize,
   isConfigured: Boolean(pool),

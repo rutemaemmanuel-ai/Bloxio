@@ -39,6 +39,14 @@ function showStatus(message) {
   status.hidden = false;
 }
 
+const googleButton = document.querySelector('.auth-social-button');
+if (googleButton) {
+  googleButton.addEventListener('click', event => {
+    event.preventDefault();
+    showStatus('Google sign-in is coming soon. Use email and password for now.');
+  });
+}
+
 async function readResponse(response) {
   const body = await response.json().catch(() => ({}));
   if (!response.ok) {

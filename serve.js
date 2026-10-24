@@ -209,7 +209,7 @@ async function handleAuthRequest(req, res, reqPath) {
         });
       } catch (error) {
         if (error.code === '23505') {
-          return sendJson(res, 409, { error: 'That email or username is already registered.' });
+          return sendJson(res, 409, { error: 'That email address is already registered.' });
         }
         throw error;
       }

@@ -34,7 +34,13 @@ button,input{font:inherit}
 .auth-tabs{display:grid;grid-template-columns:1fr 1fr;padding:4px;border:1px solid #273956;border-radius:12px;background:#0a1528}
 .auth-tab{min-height:42px;border:0;border-radius:9px;background:transparent;color:#aebbd3;font-size:13px;font-weight:650;cursor:pointer}
 .auth-tab[aria-selected="true"]{background:linear-gradient(120deg,#596bff,#4858e9);color:white;box-shadow:0 4px 14px #4f5fff33}
-.auth-tab:focus-visible,.auth-submit:focus-visible{outline:2px solid #b4bdff;outline-offset:3px}
+.auth-social{margin-top:18px}
+.auth-social-button{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:48px;padding:0 18px;border:1px solid #2d3b5d;border-radius:12px;background:#0b1730;color:#eef3ff;font-weight:700;cursor:pointer;transition:filter .2s,transform .2s,border-color .2s}
+.auth-social-button:hover{filter:brightness(1.08);transform:translateY(-1px);border-color:#536ef7}
+.auth-social-button svg{width:18px;height:18px;display:block}
+.auth-divider{display:flex;align-items:center;gap:12px;margin:18px 0 10px;color:#7c8ea7;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.auth-divider:before,.auth-divider:after{content:"";display:block;flex:1;height:1px;background:linear-gradient(90deg,transparent,#32486e,transparent)}
+.auth-tab:focus-visible,.auth-submit:focus-visible,.auth-social-button:focus-visible{outline:2px solid #b4bdff;outline-offset:3px}
 .auth-form{display:grid;gap:9px}
 .auth-form[hidden],.auth-status[hidden]{display:none}
 .auth-form label{margin-top:4px;color:#d6def0;font-size:12px;font-weight:650}

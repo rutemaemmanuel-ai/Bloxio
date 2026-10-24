@@ -6,18 +6,19 @@ test('normalizes email addresses for account matching', () => {
   assert.equal(authStore.normalizeEmail('  USER@Example.com '), 'user@example.com');
 });
 
+test('generates valid usernames from email addresses when signup does not request one', () => {
+  assert.equal(authStore.generateUsernameFromEmail('player@example.com'), 'player');
+  assert.equal(authStore.generateUsernameFromEmail('a@example.com'), 'axx');
+  assert.match(authStore.generateUsernameFromEmail('a very long email name@example.com'), /^[a-z0-9_]{3,24}$/);
+});
+
 test('validates account details before registration', () => {
   const valid = {
-    username: 'Bloxio_User',
     email: 'player@example.com',
     password: 'a-long-and-safe-password'
   };
 
   assert.equal(authStore.validateSignupInput(valid), null);
-  assert.match(
-    authStore.validateSignupInput({ ...valid, username: 'x' }),
-    /username/i
-  );
   assert.match(
     authStore.validateSignupInput({ ...valid, email: 'not-an-email' }),
     /email/i

@@ -90,10 +90,6 @@ function publicUser(user) {
 }
 
 function signupValidation(body) {
-  if (typeof body.username !== 'string' ||
-      !/^[a-zA-Z0-9_]{3,24}$/.test(body.username.trim())) {
-    return 'Choose a username with 3–24 letters, numbers, or underscores.';
-  }
   if (typeof body.email !== 'string' || body.email.length > 254 ||
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email.trim())) {
     return 'Enter a valid email address.';
@@ -103,6 +99,24 @@ function signupValidation(body) {
     return 'Use a password that is at least 12 characters and no more than 128 bytes.';
   }
   return null;
+}
+
+function usernameFromEmail(email) {
+  const localPart = String(email || '').trim().split('@')[0]?.toLowerCase() || 'player';
+  const sanitized = localPart.replace(/[^a-z0-9_]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 24);
+  const base = sanitized || 'player';
+  return base.length >= 3 ? base : `${base}${'x'.repeat(3 - base.length)}`;
+}
+
+async function uniqueUsername(db, email) {
+  const base = usernameFromEmail(email);
+  let username = base;
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const existing = await db.prepare('SELECT 1 FROM bloxio_users WHERE username = ?').bind(username).first();
+    if (!existing) return username;
+    username = `${base.slice(0, 15)}_${toHex(crypto.getRandomValues(new Uint8Array(4)))}`;
+  }
+  throw new Error('Unable to generate a unique username for the account.');
 }
 
 async function readJson(request) {
@@ -228,8 +242,8 @@ async function handleAuth(request, env, pathname) {
       if (validationError) return jsonResponse({ error: validationError }, 400);
 
       const id = crypto.randomUUID();
-      const username = body.username.trim().toLowerCase();
       const email = body.email.trim().toLowerCase();
+      const username = await uniqueUsername(db, email);
       const salt = crypto.getRandomValues(new Uint8Array(16));
       const hash = toHex(await passwordHash(body.password, salt));
       const createdAt = Date.now();
@@ -251,7 +265,7 @@ async function handleAuth(request, env, pathname) {
         ]);
       } catch (error) {
         if (/unique|constraint/i.test(error.message || '')) {
-          return jsonResponse({ error: 'That email or username is already registered.' }, 409);
+          return jsonResponse({ error: 'That email address is already registered.' }, 409);
         }
         throw error;
       }

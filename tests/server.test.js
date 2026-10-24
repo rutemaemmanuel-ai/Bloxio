@@ -48,6 +48,8 @@ test('keeps the sign-in page public and explains missing database configuration'
   const page = await pageResponse.text();
   assert.equal(pageResponse.status, 200);
   assert.match(page, /id="signupForm"/);
+  assert.match(page, /id="signupEmail"/);
+  assert.doesNotMatch(page, /id="signupName"/);
   assert.match(page, /id="loginForm"/);
   assert.doesNotMatch(page, /Design preview/);
 
@@ -76,7 +78,6 @@ test('does not claim registration succeeds without persistent account storage', 
       Origin: baseUrl
     },
     body: JSON.stringify({
-      username: 'TestUser',
       email: 'test@example.com',
       password: 'a-valid-test-password'
     })
