@@ -26,10 +26,12 @@ jobs:
       - name: Prepare static site
         run: |
           mkdir _site
-          cp ./*.html ./*.css ./*.js _site/
+          cp ./*.html ./*.css ./*.js ./*.mjs _site/
           cp ./*.ico ./*.png ./*.xml ./*.txt _site/
           rm _site/serve.js
           cp -R assets _site/assets
+          # Bloxio Studio imports three.js from vendor/ via an import map.
+          cp -R vendor _site/vendor
           touch _site/.nojekyll
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
