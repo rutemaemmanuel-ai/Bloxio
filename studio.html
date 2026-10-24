@@ -7,7 +7,7 @@
   <title>Bloxio Studio — 3D Game Engine & Editor</title>
   <link rel="icon" href="favicon.ico" sizes="any">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="studio.css?v=20261015-1">
+  <link rel="stylesheet" href="studio.css?v=20261024-2">
 </head>
 <body>
   <div class="studio-app" id="studioApp">
@@ -126,6 +126,11 @@
           <span class="autosave-dot"></span>
           <span id="autosaveText">Ready</span>
         </div>
+
+        <button class="studio-btn studio-btn-ghost" id="btnVisualScript" type="button" title="Open the visual scripting workspace for the selected node">
+          <span>⛓</span>
+          <span>Visual Script</span>
+        </button>
 
         <button class="studio-btn studio-btn-ghost" id="btnAIAssistant" type="button">
           <span>✨</span>
@@ -573,6 +578,13 @@
                   </select>
                 </div>
                 <button class="studio-btn studio-btn-ghost" id="btnEditAttachedScript" type="button" style="width:100%;font-size:11px;margin-top:4px;">Edit Script in Code Editor</button>
+                <div class="prop-row" style="margin-top:10px;">
+                  <span class="prop-label">Visual graph</span>
+                  <select class="prop-input" id="objGraphSelect">
+                    <option value="none">None</option>
+                  </select>
+                </div>
+                <button class="studio-btn studio-btn-ghost" id="btnOpenGraph" type="button" style="width:100%;font-size:11px;margin-top:4px;">Open Visual Script Editor</button>
               </div>
             </div>
 
@@ -727,6 +739,48 @@
     </div>
   </div>
 
+  <!-- VISUAL SCRIPTING WORKSPACE -->
+  <div class="graph-overlay" id="graphWorkspace" hidden>
+    <header class="graph-toolbar">
+      <div class="graph-toolbar-title">
+        <span class="graph-badge">VISUAL SCRIPT</span>
+        <input class="graph-name-input" id="graphNameInput" type="text" aria-label="Graph name" value="New Graph">
+        <span class="graph-meta" id="graphMeta">0 nodes</span>
+      </div>
+      <div class="graph-toolbar-actions">
+        <button class="studio-btn studio-btn-ghost" id="btnGraphUndo" type="button" title="Undo (Ctrl+Z)">↩ Undo</button>
+        <button class="studio-btn studio-btn-ghost" id="btnGraphRedo" type="button" title="Redo (Ctrl+Y)">↪ Redo</button>
+        <button class="studio-btn studio-btn-ghost" id="btnGraphValidate" type="button" title="Check the graph for errors">✓ Validate</button>
+        <button class="studio-btn studio-btn-ghost" id="btnGraphZoomFit" type="button" title="Fit all nodes in view">⛶ Fit</button>
+        <button class="studio-btn studio-btn-primary" id="btnGraphClose" type="button">Done</button>
+      </div>
+    </header>
+    <div class="graph-body">
+      <aside class="graph-palette" aria-label="Node palette">
+        <input class="graph-search" type="search" id="graphPaletteSearch" placeholder="Search nodes…" aria-label="Search nodes">
+        <div class="graph-palette-list" id="graphPaletteList"></div>
+      </aside>
+      <div class="graph-canvas" id="graphCanvas">
+        <div class="graph-world" id="graphWorld">
+          <svg class="graph-wires" id="graphWires" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div class="graph-nodes" id="graphNodes"></div>
+        </div>
+        <p class="graph-empty" id="graphEmpty">Add a node from the palette, or press an event node like “On Update” to start a chain.</p>
+        <p class="graph-hint">Drag the background to pan · scroll to zoom · drag port to port to wire · click a wire to remove it</p>
+      </div>
+      <aside class="graph-side" aria-label="Graph diagnostics">
+        <section>
+          <h3>Diagnostics</h3>
+          <div class="graph-diagnostics" id="graphDiagnostics"></div>
+        </section>
+        <section>
+          <h3>Node</h3>
+          <div class="graph-props" id="graphSelectedProps"></div>
+        </section>
+      </aside>
+    </div>
+  </div>
+
   <!-- three.js is vendored so the editor works as plain static files (no bundler).
        Re-run `npm run vendor:three` after upgrading the three dev dependency. -->
   <script type="importmap">
@@ -738,6 +792,6 @@
     }
   </script>
   <!-- SCRIPT ENGINE MODULE -->
-  <script type="module" src="studio-engine.js?v=20261024-1"></script>
+  <script type="module" src="studio-engine.js?v=20261024-2"></script>
 </body>
 </html>

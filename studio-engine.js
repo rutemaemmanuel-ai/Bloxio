@@ -4,6 +4,14 @@ import { TransformControls } from 'three/addons/controls/TransformControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { compileStudioScripts, createStudioScriptSandbox } from './studio-sandbox.mjs';
+import { createGraphEditor } from './studio-graph-editor.js';
+import {
+  createEmptyGraph,
+  createGraphRuntime,
+  normalizeGraph,
+  sanitizeGraphs,
+  validateGraph
+} from './studio-graph.mjs';
 
 (() => {
   const $ = selector => document.querySelector(selector);
@@ -65,6 +73,10 @@ export default class RotatorHazard {
 `
   };
   let scripts = { ...starterScripts };
+  let graphs = {};
+  let activeGraphId = null;
+  let graphEditor = null;
+  const graphRuntimes = [];
   let renderer;
   let scene;
   let camera;
@@ -125,6 +137,7 @@ export default class RotatorHazard {
       if (!Array.isArray(value) || value.some(project =>
         !project || typeof project.id !== 'string' || typeof project.name !== 'string' ||
         !Array.isArray(project.scene) ||
+        (project.graphs !== undefined && (!project.graphs || typeof project.graphs !== 'object' || Array.isArray(project.graphs))) ||
         (project.scripts !== undefined && (!project.scripts || typeof project.scripts !== 'object' ||
           Array.isArray(project.scripts) || Object.values(project.scripts).some(source => typeof source !== 'string'))))) {
         throw new TypeError('Studio project data has an invalid format.');
@@ -152,6 +165,7 @@ export default class RotatorHazard {
       template: currentProject.template || 'empty',
       updatedAt: Date.now(),
       scripts: { ...scripts },
+      graphs: JSON.parse(JSON.stringify(graphs)),
       scene: editorLayer.children.map(object => object.toJSON())
     };
   }
@@ -204,9 +218,12 @@ export default class RotatorHazard {
         template: project.template || 'empty'
       };
       scripts = { ...starterScripts, ...(project.scripts || {}) };
+      graphs = sanitizeGraphs(project.graphs);
+      activeGraphId = null;
       setProjectName(currentProject.name);
       localStorage.setItem(ACTIVE_KEY, currentProject.id);
       renderScripts();
+      renderGraphAssignments();
       renderAssetGrid();
       refreshHierarchy();
       updateStats();
@@ -230,6 +247,7 @@ export default class RotatorHazard {
       tag: name === 'Player' ? 'Player' : 'Default',
       layer: 'Default',
       script: 'none',
+      graph: 'none',
       active: true
     };
   }
@@ -349,7 +367,10 @@ export default class RotatorHazard {
       ]
     };
     scripts = { ...starterScripts };
+    graphs = {};
+    activeGraphId = null;
     renderScripts();
+    renderGraphAssignments();
     clearEditor();
     currentProject.template = templateId;
     for (const [kind, name, color, position] of (presets[templateId] || [])) {
@@ -363,6 +384,12 @@ export default class RotatorHazard {
       if (name === 'Goal Portal') {
         object.userData.meta.tag = 'Goal';
         object.scale.set(1.5, 1.5, 1.5);
+      }
+      if (name === 'Platform 1') {
+        // Every template ships one working visual graph so the workspace is
+        // never an empty mystery: this platform spins itself in play mode.
+        const graphId = createDemoGraph();
+        object.userData.meta.graph = graphId;
       }
       if (name === 'Ground' || name === 'Track') object.scale.set(1, 1, 1);
       editorLayer.add(object);
@@ -512,6 +539,8 @@ export default class RotatorHazard {
     $('#physBouncinessVal').textContent = Number(meta.bounciness ?? 0.2).toFixed(2);
     $('#physIsTrigger').checked = Boolean(meta.trigger);
     $('#objScriptSelect').value = meta.script || 'none';
+    renderGraphAssignments();
+    $('#objGraphSelect').value = meta.graph && graphs[meta.graph] ? meta.graph : 'none';
     $('#statusSelection').textContent = object.name;
   }
 
@@ -827,6 +856,144 @@ export default class RotatorHazard {
     });
   }
 
+  function findRuntimeObject(runtimeId) {
+    return editorLayer.children.find(candidate => candidate.userData.runtimeId === runtimeId) || null;
+  }
+
+  function createGraphContext(owner) {
+    const ownerId = owner.userData.runtimeId || (owner.userData.runtimeId = crypto.randomUUID());
+    const axes = {
+      horizontal: [['d', 'arrowright'], ['a', 'arrowleft']],
+      vertical: [['w', 'arrowup'], ['s', 'arrowdown']]
+    };
+    return {
+      selfId: ownerId,
+      input: {
+        getAxis(axis) {
+          const pair = axes[String(axis).toLowerCase()];
+          if (!pair) return 0;
+          const positive = pair[0].some(key => runtimeKeys.has(key)) ? 1 : 0;
+          const negative = pair[1].some(key => runtimeKeys.has(key)) ? 1 : 0;
+          return positive - negative;
+        },
+        isKeyDown(key) {
+          return runtimeKeys.has(String(key).toLowerCase());
+        }
+      },
+      getObject(id) {
+        const object = findRuntimeObject(id);
+        if (!object) return null;
+        return {
+          id,
+          name: object.name,
+          position: object.position.toArray(),
+          rotation: object.rotation.toArray(),
+          scale: object.scale.toArray(),
+          visible: object.visible
+        };
+      },
+      write(id, patch) {
+        const object = findRuntimeObject(id);
+        if (!object) return;
+        if (Array.isArray(patch.position)) object.position.fromArray(patch.position);
+        if (Array.isArray(patch.rotation)) object.rotation.fromArray(patch.rotation);
+        if (Array.isArray(patch.scale)) object.scale.fromArray(patch.scale);
+        if (typeof patch.visible === 'boolean') object.visible = patch.visible;
+        if (selected === object) showInspector(object);
+      },
+      move(id, vector) {
+        const object = findRuntimeObject(id);
+        if (!object) return;
+        object.position.x += vector[0];
+        object.position.y += vector[1];
+        object.position.z += vector[2];
+        if (selected === object) showInspector(object);
+      },
+      rotate(id, vector) {
+        const object = findRuntimeObject(id);
+        if (!object) return;
+        object.rotation.x += vector[0];
+        object.rotation.y += vector[1];
+        object.rotation.z += vector[2];
+        if (selected === object) showInspector(object);
+      },
+      velocity(id, value) {
+        const object = findRuntimeObject(id);
+        if (object) runtimeVelocities.set(object, value);
+      },
+      destroy(id) {
+        const object = findRuntimeObject(id);
+        if (!object) return;
+        if (selected === object) deselect();
+        editorLayer.remove(object);
+        refreshHierarchy();
+        updateStats();
+      },
+      spawn(kind, position) {
+        if (!['box', 'sphere', 'cylinder', 'capsule', 'cone', 'plane', 'torus'].includes(kind)) return;
+        const object = createMesh(kind, `${kind.charAt(0).toUpperCase()}${kind.slice(1)}`);
+        object.position.fromArray(position);
+        editorLayer.add(object);
+        refreshHierarchy();
+        updateStats();
+      },
+      score(amount) {
+        const current = Number($('#hudScoreVal').textContent) || 0;
+        $('#hudScoreVal').textContent = String(current + (Number(amount) || 0));
+      },
+      log(message, level) {
+        log(message, level === 'warn' ? 'warn' : level === 'error' ? 'error' : 'info');
+      }
+    };
+  }
+
+  function startGraphRuntimes() {
+    disposeGraphRuntimes();
+    let started = 0;
+    for (const object of editorLayer.children) {
+      const graphId = object.userData.meta?.graph;
+      if (!graphId || graphId === 'none') continue;
+      const graph = graphs[graphId];
+      if (!graph) {
+        log(`${object.name} references a visual graph that no longer exists.`, 'warn');
+        continue;
+      }
+      const { errors } = validateGraph(graph);
+      if (errors.length) {
+        log(`Graph "${graph.name}" on ${object.name} was skipped: ${errors[0].message}`, 'error');
+        continue;
+      }
+      const runtime = createGraphRuntime({
+        graph,
+        context: createGraphContext(object),
+        name: graph.name
+      });
+      graphRuntimes.push({ runtime, object });
+      try {
+        runtime.start([...runtimeKeys]);
+      } catch (error) {
+        log(`Graph "${graph.name}" failed to start: ${error.message}`, 'error');
+      }
+      started += 1;
+    }
+    if (started) log(`${started} visual graph${started === 1 ? '' : 's'} running.`);
+  }
+
+  function updateGraphRuntimes(delta) {
+    for (const entry of graphRuntimes) {
+      try {
+        entry.runtime.update(delta, [...runtimeKeys]);
+      } catch (error) {
+        log(`Graph runtime error: ${error.message}`, 'error');
+      }
+    }
+  }
+
+  function disposeGraphRuntimes() {
+    for (const entry of graphRuntimes) entry.runtime.dispose();
+    graphRuntimes.length = 0;
+  }
+
   function handleRuntimeMessage(message) {
     if (message.type === 'ready') {
       log('Gameplay scripts started in the restricted browser runtime.');
@@ -924,6 +1091,7 @@ export default class RotatorHazard {
     playSnapshot = serializeProject();
     try {
       await startProjectScripts();
+      startGraphRuntimes();
     } catch (error) {
       playSnapshot = null;
       playStarting = false;
@@ -959,6 +1127,7 @@ export default class RotatorHazard {
     if (!playing) return;
     scriptSandbox?.dispose();
     scriptSandbox = null;
+    disposeGraphRuntimes();
     runtimeKeys.clear();
     playing = false;
     paused = false;
@@ -1076,6 +1245,118 @@ export default class RotatorHazard {
     Object.keys(scripts).forEach(name => select.add(new Option(name, name)));
   }
 
+  function renderGraphAssignments() {
+    const select = $('#objGraphSelect');
+    if (!select) return;
+    select.replaceChildren(new Option('None', 'none'));
+    Object.entries(graphs).forEach(([id, graph]) => {
+      const count = graph.nodes.length;
+      select.add(new Option(`${graph.name} (${count} node${count === 1 ? '' : 's'})`, id));
+    });
+    select.add(new Option('＋ New visual graph…', '__new__'));
+  }
+
+  function createStarterGraph(name) {
+    const id = crypto.randomUUID();
+    graphs[id] = normalizeGraph({
+      name,
+      nodes: [
+        { id: 'start', type: 'event_start', x: 40, y: 60, props: {} },
+        {
+          id: 'message',
+          type: 'text',
+          x: 40,
+          y: 190,
+          props: { value: `${name} started` }
+        },
+        { id: 'print', type: 'print', x: 330, y: 60, props: { level: 'info' } }
+      ],
+      connections: [
+        { from: { node: 'start', port: 'exec' }, to: { node: 'print', port: 'exec' } },
+        { from: { node: 'message', port: 'value' }, to: { node: 'print', port: 'message' } }
+      ]
+    }, name);
+    return id;
+  }
+
+  function createDemoGraph() {
+    const id = crypto.randomUUID();
+    graphs[id] = normalizeGraph({
+      name: 'Rotating Platform',
+      nodes: [
+        { id: 'update', type: 'event_update', x: 40, y: 40, props: {} },
+        { id: 'spin', type: 'vector3', x: 40, y: 190, props: { x: 0, y: 0.02, z: 0 } },
+        { id: 'self', type: 'self', x: 40, y: 350, props: {} },
+        { id: 'rotate', type: 'rotate_by', x: 330, y: 40, props: {} },
+        { id: 'start', type: 'event_start', x: 330, y: 280, props: {} },
+        { id: 'message', type: 'text', x: 330, y: 400, props: { value: 'Platform graph running' } },
+        { id: 'print', type: 'print', x: 620, y: 280, props: { level: 'info' } }
+      ],
+      connections: [
+        { from: { node: 'update', port: 'exec' }, to: { node: 'rotate', port: 'exec' } },
+        { from: { node: 'self', port: 'object' }, to: { node: 'rotate', port: 'object' } },
+        { from: { node: 'spin', port: 'value' }, to: { node: 'rotate', port: 'delta' } },
+        { from: { node: 'start', port: 'exec' }, to: { node: 'print', port: 'exec' } },
+        { from: { node: 'message', port: 'value' }, to: { node: 'print', port: 'message' } }
+      ]
+    }, 'Rotating Platform');
+    return id;
+  }
+
+  function ensureGraphForObject(object) {
+    const meta = object.userData.meta || (object.userData.meta = defaultMeta(object.name));
+    if (meta.graph && graphs[meta.graph]) return meta.graph;
+    const id = createStarterGraph(`${object.name} Graph`);
+    meta.graph = id;
+    renderGraphAssignments();
+    $('#objGraphSelect').value = id;
+    changed(`Created a visual graph for ${object.name}.`);
+    return id;
+  }
+
+  function openGraphEditor(graphId) {
+    if (!selected) {
+      log('Select a node in the scene first, then open its visual graph.', 'warn');
+      toggleTab('tabConsole');
+      return;
+    }
+    const id = graphId || ensureGraphForObject(selected);
+    const graph = graphs[id];
+    if (!graph) return;
+    activeGraphId = id;
+    if (!graphEditor) graphEditor = buildGraphEditor();
+    graphEditor.open(graph, { ownerName: `${selected.name} (${selected.userData.meta?.tag || 'Default'})` });
+  }
+
+  function buildGraphEditor() {
+    const editor = createGraphEditor({
+      getObjects: () => getRuntimeObjects(),
+      onLog: (message, level) => log(message, level),
+      onChange: graph => {
+        if (!activeGraphId) return;
+        const previousName = graphs[activeGraphId]?.name;
+        graphs[activeGraphId] = normalizeGraph(graph, previousName || 'Graph');
+        renderGraphAssignments();
+        if (selected) $('#objGraphSelect').value = activeGraphId;
+        takeHistorySnapshot();
+        saveProject(true);
+      },
+      onClose: () => {
+        const { errors } = activeGraphId && graphs[activeGraphId]
+          ? validateGraph(graphs[activeGraphId])
+          : { errors: [] };
+        log(errors.length
+          ? `Graph saved with ${errors.length} error${errors.length === 1 ? '' : 's'}. Fix them before play mode will run it.`
+          : 'Visual graph saved to the project.',
+        errors.length ? 'warn' : 'info');
+        activeGraphId = null;
+      }
+    });
+    // Automation/debug hook: the editor API is inert unless something calls it.
+    window.bloxioGraphEditor = editor;
+    return editor;
+  }
+
   function renderScripts() {
     const host = $('#scriptFileList');
     host.replaceChildren(...Object.keys(scripts).map(name => {
@@ -1089,6 +1370,11 @@ export default class RotatorHazard {
     }));
     renderScriptAssignments();
     openScript(Object.keys(scripts)[0]);
+  }
+
+  function toggleTab(tabId) {
+    const tab = document.getElementById(tabId);
+    if (tab) tab.click();
   }
 
   function bindTabs() {
@@ -1109,9 +1395,28 @@ export default class RotatorHazard {
     }
   }
 
+  function bindGraphControls() {
+    $('#btnVisualScript')?.addEventListener('click', () => openGraphEditor());
+    $('#btnOpenGraph')?.addEventListener('click', () => openGraphEditor());
+    $('#objGraphSelect')?.addEventListener('change', event => {
+      if (!selected) return;
+      const meta = selected.userData.meta || (selected.userData.meta = defaultMeta(selected.name));
+      const value = event.target.value;
+      if (value === '__new__') {
+        const graphId = ensureGraphForObject(selected);
+        meta.graph = graphId;
+        openGraphEditor(graphId);
+        return;
+      }
+      meta.graph = value;
+      changed(value === 'none' ? 'Visual graph detached from the node.' : `Attached graph "${graphs[value]?.name || value}".`);
+    });
+  }
+
   function bindInterface() {
     bindTabs();
     bindInspector();
+    bindGraphControls();
     prepareTemplateModal();
     renderScripts();
     window.addEventListener('keydown', event => {
@@ -1479,6 +1784,7 @@ export default class RotatorHazard {
     lastFrame = now;
     orbit.update();
     if (playing && !paused) {
+      updateGraphRuntimes(delta);
       scriptSandbox?.update(delta, [...runtimeKeys]);
       editorLayer.children.forEach(object => {
         const meta = object.userData.meta;
