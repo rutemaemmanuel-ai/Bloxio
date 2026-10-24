@@ -37,6 +37,7 @@ button,input{font:inherit}
 .auth-social{margin-top:18px}
 .auth-social-button{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:48px;padding:0 18px;border:1px solid #2d3b5d;border-radius:12px;background:#0b1730;color:#eef3ff;font-weight:700;cursor:pointer;transition:filter .2s,transform .2s,border-color .2s}
 .auth-social-button:hover{filter:brightness(1.08);transform:translateY(-1px);border-color:#536ef7}
+.auth-social-button:disabled{cursor:wait;opacity:.7;transform:none}
 .auth-social-button svg{width:18px;height:18px;display:block}
 .auth-divider{display:flex;align-items:center;gap:12px;margin:18px 0 10px;color:#7c8ea7;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
 .auth-divider:before,.auth-divider:after{content:"";display:block;flex:1;height:1px;background:linear-gradient(90deg,transparent,#32486e,transparent)}

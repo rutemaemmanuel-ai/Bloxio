@@ -3,6 +3,7 @@ const forms = [...document.querySelectorAll('.auth-form')];
 const heading = document.getElementById('authHeading');
 const intro = document.getElementById('authIntro');
 const status = document.getElementById('authStatus');
+const googleButton = document.querySelector('.auth-social-button');
 
 function selectAuthTab(selectedTab) {
   tabs.forEach(tab => {
@@ -39,12 +40,24 @@ function showStatus(message) {
   status.hidden = false;
 }
 
-const googleButton = document.querySelector('.auth-social-button');
 if (googleButton) {
-  googleButton.addEventListener('click', event => {
-    event.preventDefault();
-    showStatus('Google sign-in is coming soon. Use email and password for now.');
+  googleButton.addEventListener('click', () => {
+    googleButton.disabled = true;
+    googleButton.querySelector('span').textContent = 'Connecting to Google…';
+    status.hidden = true;
+    window.location.assign('/api/auth/google');
   });
+}
+
+const authErrors = new Map([
+  ['google_not_configured', 'Google sign-in is not set up yet. Please use email and password.'],
+  ['google_cancelled', 'Google sign-in was cancelled. You can try again or use email and password.'],
+  ['google_failed', 'Google sign-in could not be completed. Please try again or use email and password.']
+]);
+const authError = new URLSearchParams(window.location.search).get('auth_error');
+if (authError && authErrors.has(authError)) {
+  showStatus(authErrors.get(authError));
+  window.history.replaceState(null, '', `${window.location.pathname}${window.location.hash}`);
 }
 
 async function readResponse(response) {

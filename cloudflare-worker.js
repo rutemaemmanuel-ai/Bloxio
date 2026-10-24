@@ -1,4 +1,6 @@
 const COOKIE_NAME = 'bloxio_session';
+const GOOGLE_STATE_COOKIE = 'bloxio_google_state';
+const GOOGLE_VERIFIER_COOKIE = 'bloxio_google_verifier';
 const SESSION_DURATION_SECONDS = 60 * 60 * 24 * 30;
 const PASSWORD_ITERATIONS = 100000;
 const RATE_LIMIT = 20;
@@ -36,6 +38,194 @@ function cookieToken(request) {
 
 function sessionCookie(token, maxAge = SESSION_DURATION_SECONDS) {
   return `${COOKIE_NAME}=${encodeURIComponent(token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAge}`;
+}
+
+function oauthCookie(name, value, maxAge = 600) {
+  return `${name}=${encodeURIComponent(value)}; Path=/api/auth/google; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAge}`;
+}
+
+function requestCookie(request, name) {
+  for (const part of (request.headers.get('Cookie') || '').split(';')) {
+    const separator = part.indexOf('=');
+    if (separator < 0 || part.slice(0, separator).trim() !== name) continue;
+    try {
+      return decodeURIComponent(part.slice(separator + 1).trim());
+    } catch {
+      return '';
+    }
+  }
+  return '';
+}
+
+function randomBase64Url(byteLength) {
+  const bytes = crypto.getRandomValues(new Uint8Array(byteLength));
+  return btoa(String.fromCharCode(...bytes))
+    .replaceAll('+', '-')
+    .replaceAll('/', '_')
+    .replace(/=+$/, '');
+}
+
+function authRedirect(request, error, clearOAuthCookies = false) {
+  const location = new URL('/auth.html', request.url);
+  if (error) location.searchParams.set('auth_error', error);
+  const headers = new Headers({
+    Location: location.toString(),
+    'Cache-Control': 'no-store'
+  });
+  if (clearOAuthCookies) {
+    headers.append('Set-Cookie', oauthCookie(GOOGLE_STATE_COOKIE, '', 0));
+    headers.append('Set-Cookie', oauthCookie(GOOGLE_VERIFIER_COOKIE, '', 0));
+  }
+  return new Response(null, { status: 302, headers });
+}
+
+async function startGoogleAuth(request, env) {
+  if (!env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET) {
+    return authRedirect(request, 'google_not_configured');
+  }
+
+  const state = randomBase64Url(32);
+  const verifier = randomBase64Url(32);
+  const challenge = btoa(String.fromCharCode(...await sha256(verifier)))
+    .replaceAll('+', '-')
+    .replaceAll('/', '_')
+    .replace(/=+$/, '');
+  const callbackUrl = new URL('/api/auth/google/callback', request.url);
+  const authorizationUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
+  authorizationUrl.search = new URLSearchParams({
+    client_id: env.GOOGLE_CLIENT_ID,
+    redirect_uri: callbackUrl.toString(),
+    response_type: 'code',
+    scope: 'openid email profile',
+    state,
+    code_challenge: challenge,
+    code_challenge_method: 'S256',
+    prompt: 'select_account'
+  }).toString();
+
+  const headers = new Headers({
+    Location: authorizationUrl.toString(),
+    'Cache-Control': 'no-store'
+  });
+  headers.append('Set-Cookie', oauthCookie(GOOGLE_STATE_COOKIE, state));
+  headers.append('Set-Cookie', oauthCookie(GOOGLE_VERIFIER_COOKIE, verifier));
+  return new Response(null, { status: 302, headers });
+}
+
+async function googleUserForProfile(db, profile) {
+  let user = await db.prepare(
+    'SELECT id, username, email, created_at, google_sub FROM bloxio_users WHERE google_sub = ?'
+  ).bind(profile.sub).first();
+  if (user) return user;
+
+  user = await db.prepare(
+    'SELECT id, username, email, created_at, google_sub FROM bloxio_users WHERE email = ?'
+  ).bind(profile.email).first();
+  if (user) {
+    if (user.google_sub && user.google_sub !== profile.sub) {
+      throw new Error('This email is linked to a different Google account.');
+    }
+    await db.prepare('UPDATE bloxio_users SET google_sub = ? WHERE id = ?')
+      .bind(profile.sub, user.id).run();
+    return { ...user, google_sub: profile.sub };
+  }
+
+  const id = crypto.randomUUID();
+  const username = await uniqueUsername(db, profile.email);
+  const createdAt = Date.now();
+  await db.prepare(`
+    INSERT INTO bloxio_users
+      (id, username, email, password_salt, password_hash, created_at, google_sub)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `).bind(
+    id,
+    username,
+    profile.email,
+    toHex(crypto.getRandomValues(new Uint8Array(16))),
+    toHex(crypto.getRandomValues(new Uint8Array(32))),
+    createdAt,
+    profile.sub
+  ).run();
+  return { id, username, email: profile.email, created_at: createdAt, google_sub: profile.sub };
+}
+
+async function finishGoogleAuth(request, env) {
+  const url = new URL(request.url);
+  if (url.searchParams.has('error')) {
+    return authRedirect(request, 'google_cancelled', true);
+  }
+
+  const code = url.searchParams.get('code');
+  const state = url.searchParams.get('state');
+  const expectedState = requestCookie(request, GOOGLE_STATE_COOKIE);
+  const verifier = requestCookie(request, GOOGLE_VERIFIER_COOKIE);
+  if (!code || code.length > 4096 || !state || state.length > 128 ||
+      !expectedState || !constantTimeEqual(encoder.encode(state), encoder.encode(expectedState)) ||
+      !verifier) {
+    return authRedirect(request, 'google_failed', true);
+  }
+  if (!env.DB || !env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET) {
+    return authRedirect(request, 'google_not_configured', true);
+  }
+
+  try {
+    const callbackUrl = new URL('/api/auth/google/callback', request.url);
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        code,
+        client_id: env.GOOGLE_CLIENT_ID,
+        client_secret: env.GOOGLE_CLIENT_SECRET,
+        redirect_uri: callbackUrl.toString(),
+        grant_type: 'authorization_code',
+        code_verifier: verifier
+      })
+    });
+    if (!tokenResponse.ok) {
+      console.error('Google OAuth token exchange failed with status', tokenResponse.status);
+      return authRedirect(request, 'google_failed', true);
+    }
+
+    const token = await tokenResponse.json();
+    if (typeof token.access_token !== 'string' || token.token_type?.toLowerCase() !== 'bearer') {
+      console.error('Google OAuth returned an invalid token response.');
+      return authRedirect(request, 'google_failed', true);
+    }
+    const profileResponse = await fetch('https://openidconnect.googleapis.com/v1/userinfo', {
+      headers: { Authorization: `Bearer ${token.access_token}` }
+    });
+    if (!profileResponse.ok) {
+      console.error('Google OAuth profile lookup failed with status', profileResponse.status);
+      return authRedirect(request, 'google_failed', true);
+    }
+
+    const profile = await profileResponse.json();
+    if (typeof profile.sub !== 'string' || !profile.sub ||
+        typeof profile.email !== 'string' || profile.email.length > 254 ||
+        profile.email_verified !== true ||
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profile.email)) {
+      console.error('Google OAuth returned a profile without a verified email address.');
+      return authRedirect(request, 'google_failed', true);
+    }
+    profile.email = profile.email.trim().toLowerCase();
+
+    const user = await googleUserForProfile(env.DB, profile);
+    const sessionToken = await createSession(env.DB, user.id);
+    await env.DB.prepare('DELETE FROM auth_attempts WHERE window_started_at < ?')
+      .bind(Date.now() - RATE_WINDOW_MS * 2).run();
+    const headers = new Headers({
+      Location: new URL('/', request.url).toString(),
+      'Cache-Control': 'no-store',
+      'Set-Cookie': sessionCookie(sessionToken)
+    });
+    headers.append('Set-Cookie', oauthCookie(GOOGLE_STATE_COOKIE, '', 0));
+    headers.append('Set-Cookie', oauthCookie(GOOGLE_VERIFIER_COOKIE, '', 0));
+    return new Response(null, { status: 302, headers });
+  } catch (error) {
+    console.error('Google sign-in could not be completed.', error);
+    return authRedirect(request, 'google_failed', true);
+  }
 }
 
 function constantTimeEqual(left, right) {
@@ -198,6 +388,13 @@ async function createSession(db, userId) {
 async function handleAuth(request, env, pathname) {
   const db = env.DB;
   if (!db) return jsonResponse({ error: 'Authentication database is not configured.' }, 503);
+
+  if (pathname === '/api/auth/google' && request.method === 'GET') {
+    return startGoogleAuth(request, env);
+  }
+  if (pathname === '/api/auth/google/callback' && request.method === 'GET') {
+    return finishGoogleAuth(request, env);
+  }
 
   if (pathname === '/api/auth/me' && request.method === 'GET') {
     try {

@@ -88,9 +88,11 @@ async function initialize() {
       username VARCHAR(24) NOT NULL UNIQUE,
       email VARCHAR(254) NOT NULL UNIQUE,
       password_hash TEXT NOT NULL,
+      google_sub TEXT UNIQUE,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
   `);
+  await pool.query('ALTER TABLE bloxio_users ADD COLUMN IF NOT EXISTS google_sub TEXT UNIQUE');
   await pool.query(`
     CREATE TABLE IF NOT EXISTS bloxio_sessions (
       token_hash CHAR(64) PRIMARY KEY,

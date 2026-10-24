@@ -14,7 +14,20 @@ synchronized to accounts. Studio projects still use browser-local storage.
 3. Create the database using `npm run cf:db:create`. Copy the returned database
    ID into `database_id` in `wrangler.jsonc`.
 4. Apply the schema with `npm run cf:db:migrate:remote`.
-5. Deploy with `npm run cf:deploy`.
+5. To enable Google sign-in, create an OAuth 2.0 **Web application** client in
+   Google Cloud Console. Add
+   `https://vexora-site.rutemaemmanuel.workers.dev/api/auth/google/callback`
+   as an authorized redirect URI. Store the client ID and secret as Worker
+   secrets; do not put either value in source files:
+
+   ```powershell
+   npx wrangler secret put GOOGLE_CLIENT_ID --name vexora-site
+   npx wrangler secret put GOOGLE_CLIENT_SECRET --name vexora-site
+   ```
+
+   Wrangler prompts for each value. Use the OAuth client ID and secret from
+   Google Cloud Console.
+6. Deploy with `npm run cf:deploy`.
 
 Cloudflare's Workers Free plan includes a limited daily request allowance and
 CPU budget; D1 Free includes limited rows read and written per day and a
