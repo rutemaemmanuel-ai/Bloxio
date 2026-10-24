@@ -3,7 +3,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { TransformControls } from 'three/addons/controls/TransformControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
-import { compileStudioScripts, createStudioScriptSandbox } from './src/engine/scripting/studio-sandbox.ts';
+import { compileStudioScripts, createStudioScriptSandbox } from './studio-sandbox.mjs';
 
 (() => {
   const $ = selector => document.querySelector(selector);
@@ -376,8 +376,20 @@ export default class RotatorHazard {
   }
 
   function makeStarterScene() {
+    const params = new URLSearchParams(location.search);
+    // The creator dashboard links here with ?template=<id> to start a new game
+    // without inheriting whatever project was last open.
+    const requestedTemplate = params.get('template');
+    const template = templates.find(entry => entry.id === requestedTemplate);
+    if (template) {
+      // Name the project after its template so the creator dashboard can tell
+      // several new games apart instead of showing a wall of "My 3D Game".
+      currentProject = { id: crypto.randomUUID(), name: template.name, template: template.id };
+      buildTemplate(template.id);
+      return;
+    }
     const saved = readProjects();
-    const queryProjectId = new URLSearchParams(location.search).get('project');
+    const queryProjectId = params.get('project');
     const activeId = queryProjectId || localStorage.getItem(ACTIVE_KEY);
     const project = saved.find(item => item.id === activeId);
     if (project) {

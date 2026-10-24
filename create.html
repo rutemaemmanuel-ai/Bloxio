@@ -7,7 +7,7 @@
   <title>Create — Bloxio</title>
   <link rel="icon" href="favicon.ico" sizes="any">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=20261021-2">
+  <link rel="stylesheet" href="style.css?v=20261024-1">
 </head>
 <body>
   <div class="app-shell">
@@ -23,11 +23,29 @@
         </div>
         <div class="creator-studio-mark" aria-hidden="true">◇</div>
       </section>
+      <section class="panel studio-projects-panel" aria-labelledby="studioProjectsTitle">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">SAVED IN THIS BROWSER</p>
+            <h2 id="studioProjectsTitle">Your Studio games</h2>
+          </div>
+        </div>
+        <div class="studio-project-list" id="studioProjects"></div>
+        <p class="studio-projects-empty" id="studioProjectsEmpty">No Studio games yet. Pick a starter below and Bloxio Studio opens with the first level already built.</p>
+        <p class="studio-starter-label">Start a new game</p>
+        <ul class="studio-starter-list">
+          <li><a class="secondary-button small" href="studio.html?template=obby">Obstacle course</a></li>
+          <li><a class="secondary-button small" href="studio.html?template=platformer">Platformer</a></li>
+          <li><a class="secondary-button small" href="studio.html?template=racing">Racing</a></li>
+          <li><a class="secondary-button small" href="studio.html?template=adventure">Adventure</a></li>
+          <li><a class="secondary-button small" href="studio.html?template=empty">Empty scene</a></li>
+        </ul>
+      </section>
       <footer><span class="brand-small"><span class="brand-mark">B</span> BLOXIO</span><span>Play. Create. Explore.</span><span>© 2026 Bloxio</span></footer>
     </main>
   </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script type="module" src="script.js?v=20261021-2"></script>
-  <script type="module" src="local-features.js?v=20261018-2"></script>
+  <script type="module" src="local-features.js?v=20261024-1"></script>
 </body>
 </html>

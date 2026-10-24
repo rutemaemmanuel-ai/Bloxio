@@ -337,4 +337,64 @@
     });
     renderPosts();
   }
+
+  // -------------------------------------------------------------
+  // Creator dashboard: the games saved by Bloxio Studio
+  // -------------------------------------------------------------
+  const studioProjectList = document.getElementById('studioProjects');
+  if (studioProjectList) {
+    const emptyState = document.getElementById('studioProjectsEmpty');
+    const STUDIO_PROJECTS_KEY = 'bloxio-studio-projects-v1';
+    const validProjects = value => Array.isArray(value) && value.every(project =>
+      project && typeof project.id === 'string' && typeof project.name === 'string' && Array.isArray(project.scene));
+    let projects = storage.read(STUDIO_PROJECTS_KEY, [], validProjects);
+
+    function formatSavedAt(updatedAt) {
+      if (!Number.isFinite(updatedAt)) return 'Saved on this device';
+      return `Edited ${new Intl.DateTimeFormat([], { dateStyle: 'medium', timeStyle: 'short' }).format(updatedAt)}`;
+    }
+
+    function renderProjects() {
+      studioProjectList.replaceChildren();
+      projects.forEach(project => {
+        const row = document.createElement('article');
+        row.className = 'studio-project-row';
+
+        const details = document.createElement('div');
+        const title = document.createElement('h3');
+        title.textContent = project.name;
+        const meta = document.createElement('small');
+        const objects = project.scene.length;
+        meta.textContent = `${objects} object${objects === 1 ? '' : 's'} · ${formatSavedAt(project.updatedAt)}`;
+        details.append(title, meta);
+
+        const actions = document.createElement('div');
+        actions.className = 'studio-project-actions';
+
+        const open = document.createElement('a');
+        open.className = 'primary-button small';
+        open.href = `studio.html?project=${encodeURIComponent(project.id)}`;
+        open.textContent = 'Open in Studio';
+
+        const remove = document.createElement('button');
+        remove.className = 'secondary-button small';
+        remove.type = 'button';
+        remove.textContent = 'Delete';
+        remove.addEventListener('click', () => {
+          projects = projects.filter(item => item.id !== project.id);
+          if (storage.write(STUDIO_PROJECTS_KEY, projects)) {
+            renderProjects();
+            showToast(`Deleted "${project.name}" from this browser.`);
+          }
+        });
+
+        actions.append(open, remove);
+        row.append(details, actions);
+        studioProjectList.append(row);
+      });
+      emptyState.hidden = projects.length > 0;
+    }
+
+    renderProjects();
+  }
 })();

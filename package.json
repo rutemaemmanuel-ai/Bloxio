@@ -13,12 +13,14 @@
     "cf:db:create": "wrangler d1 create bloxio-auth",
     "cf:db:migrate:local": "wrangler d1 migrations apply bloxio-auth --local",
     "cf:db:migrate:remote": "wrangler d1 migrations apply bloxio-auth --remote",
-    "cf:deploy": "wrangler deploy"
+    "cf:deploy": "wrangler deploy",
+    "vendor:three": "node tools/vendor-three.js"
   },
   "dependencies": {
     "pg": "^8.16.3"
   },
   "devDependencies": {
+    "three": "^0.186.1",
     "wrangler": "^4.151.2"
   }
 }

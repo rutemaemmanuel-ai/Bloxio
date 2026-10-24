@@ -727,7 +727,17 @@
     </div>
   </div>
 
+  <!-- three.js is vendored so the editor works as plain static files (no bundler).
+       Re-run `npm run vendor:three` after upgrading the three dev dependency. -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./vendor/three/three.module.js",
+        "three/addons/": "./vendor/three/addons/"
+      }
+    }
+  </script>
   <!-- SCRIPT ENGINE MODULE -->
-  <script type="module" src="studio-engine.js?v=20261015-1"></script>
+  <script type="module" src="studio-engine.js?v=20261024-1"></script>
 </body>
 </html>

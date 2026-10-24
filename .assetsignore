@@ -18,3 +18,4 @@ serve.js
 .gitignore
 .replit
 *.md
+tools
