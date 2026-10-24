@@ -5,6 +5,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { compileStudioScripts, createStudioScriptSandbox } from './studio-sandbox.mjs';
 import { createGraphEditor } from './studio-graph-editor.js';
+import { BLOX_TEMPLATES, createBloxScriptRuntime } from './studio-bloxscript.mjs';
 import {
   createEmptyGraph,
   createGraphRuntime,
@@ -72,7 +73,8 @@ export default class RotatorHazard {
 }
 `
   };
-  let scripts = { ...starterScripts };
+  let scripts = { ...starterScripts, ...BLOX_TEMPLATES };
+  const bloxRuntimes = [];
   let graphs = {};
   let activeGraphId = null;
   let graphEditor = null;
@@ -217,7 +219,7 @@ export default class RotatorHazard {
         name: project.name || 'Untitled Project',
         template: project.template || 'empty'
       };
-      scripts = { ...starterScripts, ...(project.scripts || {}) };
+      scripts = { ...starterScripts, ...BLOX_TEMPLATES, ...(project.scripts || {}) };
       graphs = sanitizeGraphs(project.graphs);
       activeGraphId = null;
       setProjectName(currentProject.name);
@@ -366,7 +368,7 @@ export default class RotatorHazard {
         ['box', 'Ruins', '#8f8a8e', [-3, 1, -4]]
       ]
     };
-    scripts = { ...starterScripts };
+    scripts = { ...starterScripts, ...BLOX_TEMPLATES };
     graphs = {};
     activeGraphId = null;
     renderScripts();
@@ -994,6 +996,21 @@ export default class RotatorHazard {
     graphRuntimes.length = 0;
   }
 
+  function updateBloxRuntimes(delta) {
+    for (const entry of bloxRuntimes) {
+      try {
+        entry.runtime.update(delta);
+      } catch (error) {
+        log(`${entry.name} runtime error: ${error.message}`, 'error');
+      }
+    }
+  }
+
+  function disposeBloxRuntimes() {
+    for (const entry of bloxRuntimes) entry.runtime.dispose();
+    bloxRuntimes.length = 0;
+  }
+
   function handleRuntimeMessage(message) {
     if (message.type === 'ready') {
       log('Gameplay scripts started in the restricted browser runtime.');
@@ -1043,17 +1060,40 @@ export default class RotatorHazard {
     const attachedNames = new Set(editorLayer.children
       .map(object => object.userData.meta?.script)
       .filter(name => typeof name === 'string' && name !== 'none'));
-    const attachedScripts = Object.fromEntries(
-      [...attachedNames].filter(name => scripts[name]).map(name => [name, scripts[name]])
+    disposeBloxRuntimes();
+    const tsAttached = Object.fromEntries(
+      [...attachedNames]
+        .filter(name => !name.endsWith('.blox') && scripts[name])
+        .map(name => [name, scripts[name]])
     );
-    if (Object.keys(attachedScripts).length === 0) {
-      if (attachedNames.size > 0) {
-        log(`Attached scripts were not found: ${[...attachedNames].filter(name => !scripts[name]).join(', ')}`, 'error');
+
+    // BloxScript scripts run on the tree-walking interpreter, one instance per
+    // node that has one attached, against the same engine API as the graphs.
+    for (const object of editorLayer.children) {
+      const scriptName = object.userData.meta?.script;
+      if (typeof scriptName !== 'string' || !scriptName.endsWith('.blox') || !scripts[scriptName]) continue;
+      const runtime = createBloxScriptRuntime({
+        source: scripts[scriptName],
+        context: createGraphContext(object),
+        name: scriptName
+      });
+      if (!runtime.ready()) {
+        log(`${scriptName} on ${object.name} could not start. Fix the reported line and press Play again.`, 'error');
+        continue;
       }
+      bloxRuntimes.push({ runtime, object, name: scriptName });
+    }
+    if (bloxRuntimes.length) {
+      log(`${bloxRuntimes.length} BloxScript${bloxRuntimes.length === 1 ? '' : 's'} running.`);
+    }
+
+    if (Object.keys(tsAttached).length === 0) {
+      const missing = [...attachedNames].filter(name => !scripts[name]);
+      if (missing.length) log(`Attached scripts were not found: ${missing.join(', ')}`, 'error');
       return;
     }
 
-    const compiledScripts = await compileStudioScripts(attachedScripts);
+    const compiledScripts = await compileStudioScripts(tsAttached);
     scriptSandbox = createStudioScriptSandbox({
       scripts: compiledScripts,
       objects: getRuntimeObjects(),
@@ -1128,6 +1168,7 @@ export default class RotatorHazard {
     scriptSandbox?.dispose();
     scriptSandbox = null;
     disposeGraphRuntimes();
+    disposeBloxRuntimes();
     runtimeKeys.clear();
     playing = false;
     paused = false;
@@ -1501,15 +1542,20 @@ export default class RotatorHazard {
       log(`${$('#activeScriptName').textContent} saved with the project.`);
     });
     $('#btnNewScript').addEventListener('click', () => {
-      const name = window.prompt('New TypeScript script name:', 'NewScript.ts');
+      const name = window.prompt('New script name (.blox for BloxScript, .ts for TypeScript):', 'NewScript.blox');
       if (!name) return;
-      const filename = name.endsWith('.ts') ? name : `${name}.ts`;
-      if (!/^[\w.-]+\.ts$/i.test(filename) || Object.hasOwn(scripts, filename)) {
-        log('Use a unique TypeScript filename without folders (for example, NewScript.ts).', 'warn');
+      const filename = /\.(ts|blox)$/i.test(name) ? name : `${name}.blox`;
+      if (!/^[\w.-]+\.(ts|blox)$/i.test(filename) || Object.hasOwn(scripts, filename)) {
+        log('Use a unique .blox or .ts filename without folders (for example, NewScript.blox).', 'warn');
         return;
       }
-      const className = filename.replace(/\.ts$/i, '').replace(/\W/g, '') || 'NewScript';
-      scripts[filename] = `export default class ${className} {\n  start() {\n    Engine.log('${className} ready');\n  }\n\n  update(deltaTime: number) {\n    // Add gameplay behavior here.\n  }\n}\n`;
+      if (filename.endsWith('.blox')) {
+        const label = filename.replace(/\.blox$/i, '');
+        scripts[filename] = `# ${label}\n# BloxScript: indent with 4 spaces.\n\nfunc ready():\n    print("${label} ready")\n\nfunc update(delta):\n    rotate(0, delta, 0)\n`;
+      } else {
+        const className = filename.replace(/\.ts$/i, '').replace(/\W/g, '') || 'NewScript';
+        scripts[filename] = `export default class ${className} {\n  start() {\n    Engine.log('${className} ready');\n  }\n\n  update(deltaTime: number) {\n    // Add gameplay behavior here.\n  }\n}\n`;
+      }
       renderScripts();
       openScript(filename);
       saveProject(true);
@@ -1785,6 +1831,7 @@ export default class RotatorHazard {
     orbit.update();
     if (playing && !paused) {
       updateGraphRuntimes(delta);
+      updateBloxRuntimes(delta);
       scriptSandbox?.update(delta, [...runtimeKeys]);
       editorLayer.children.forEach(object => {
         const meta = object.userData.meta;
