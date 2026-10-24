@@ -1,9 +1,9 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "vexora-site",
+  "name": "bloxio",
   "main": "cloudflare-worker.js",
   "compatibility_date": "2026-10-20",
-  // Keeps the site reachable at vexora-site.<subdomain>.workers.dev.
+  // Keeps the site reachable at bloxio.<subdomain>.workers.dev.
   // Without this, adding a route disables the workers.dev URL on deploy.
   "workers_dev": true,
   // Enable these only once bloxio.site is an active zone in this Cloudflare

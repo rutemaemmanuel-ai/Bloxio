@@ -14,15 +14,16 @@ synchronized to accounts. Studio projects still use browser-local storage.
 3. Create the database using `npm run cf:db:create`. Copy the returned database
    ID into `database_id` in `wrangler.jsonc`.
 4. Apply the schema with `npm run cf:db:migrate:remote`.
-5. To enable Google sign-in, create an OAuth 2.0 **Web application** client in
+5. To enable Google sign-in, configure the OAuth consent screen with the app
+   name **Bloxio**, then create an OAuth 2.0 **Web application** client in
    Google Cloud Console. Add
-   `https://vexora-site.rutemaemmanuel.workers.dev/api/auth/google/callback`
-   as an authorized redirect URI. Store the client ID and secret as Worker
-   secrets; do not put either value in source files:
+   `https://bloxio.rutemaemmanuel.workers.dev/api/auth/google/callback`
+   as an authorized redirect URI. Store the client ID and secret on the Bloxio
+   Worker as secrets; do not put either value in source files:
 
    ```powershell
-   npx wrangler secret put GOOGLE_CLIENT_ID --name vexora-site
-   npx wrangler secret put GOOGLE_CLIENT_SECRET --name vexora-site
+   npx wrangler secret put GOOGLE_CLIENT_ID --name bloxio
+   npx wrangler secret put GOOGLE_CLIENT_SECRET --name bloxio
    ```
 
    Wrangler prompts for each value. Use the OAuth client ID and secret from
