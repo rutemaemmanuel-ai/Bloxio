@@ -7,6 +7,24 @@ supported by the Workers Web Crypto runtime), and only hashes of session
 cookies are stored. Browser-local profile and game settings are not
 synchronized to accounts. Studio projects still use browser-local storage.
 
+## Authentication API and database
+
+The Worker exposes these authentication endpoints:
+
+| Method | Path | Description |
+| --- | --- | --- |
+| GET | `/api/auth/google` | Start Google OAuth flow |
+| GET | `/api/auth/google/callback` | Google OAuth callback |
+| GET | `/api/auth/me` | Check the current session |
+| POST | `/api/auth/signup` | Email/password signup |
+| POST | `/api/auth/login` | Email/password login |
+| POST | `/api/auth/logout` | Log out |
+
+The D1 database is named `bloxio-auth` and is configured in `wrangler.jsonc`
+with ID `268742fb-fd92-42d2-af7c-fba3292ee04c`. Its authentication tables are
+`bloxio_users`, `bloxio_sessions`, and `auth_attempts`; their schema is managed
+by the SQL migrations in `migrations/`.
+
 ## Deploy on Cloudflare
 
 1. Install Node.js 20 or later and run `npm install`.
